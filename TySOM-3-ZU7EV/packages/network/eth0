@@ -1,0 +1,10 @@
+auto eth0
+iface eth0 inet dhcp
+#pre-up ifconfig ${IFACE} hw ether 00:0a:35:30:00:00
+
+auto eth0:1
+iface eth0:1 inet static
+address 192.168.2.99
+netmask 255.255.255.0
+gateway 192.168.137.1
+

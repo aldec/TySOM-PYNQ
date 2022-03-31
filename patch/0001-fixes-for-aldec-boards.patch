@@ -1,0 +1,241 @@
+diff --git a/pynq/lib/video/clocks.py b/pynq/lib/video/clocks.py
+index 51728c58..f40ce89f 100644
+--- a/pynq/lib/video/clocks.py
++++ b/pynq/lib/video/clocks.py
+@@ -35,7 +35,8 @@ import cffi
+ import math
+ import numpy as np
+ from .constants import *
+-
++from pynq import GPIO
++import time
+ 
+ _ffi = cffi.FFI()
+ 
+@@ -764,3 +765,152 @@ class SI_5324C:
+             self._write(reg_addr, data)
+ 
+         return result
++# The following algorithm is transcribed from the TySOM-3A-ZU19EG HDMI reference design
++
++SI570_XTAL_FREQ = 40000000   # The freq of the crystal in Hz
++SI570_FDCO_MIN = 4850000000  # Min VCO Operating Freq in Hz
++SI570_FDCO_MAX = 5670000000  # Max VCO Operating Freq in Hz
++
++SI570_FOUT_MIN = 10000000    # Min Output Freq in Hz
++SI570_FOUT_MAX = 945000000   # Max Output Freq in Hz
++
++SI570_P_MAX = 4194304        # pow(2,22) - Max P div value
++SI570_M_MAX = 16777216       # pow(2,24) - Max M mult value
++
++HS_DIV_OFFSET = 4
++SI570_FACTORY_FREQ = 156250000
++
++class SI570:
++    """Driver for the Si570 clock generator
++
++    """
++
++    def __init__(self, master, address, gpio):
++        """Create a new instance of the Si570 driver
++
++        Parameters
++        ----------
++        master : IIC master
++            IIC master the device is connected to
++        address : int
++            IIC address of the device
++
++        """
++        self._master = master
++        self._address = address
++        self._buffer = _ffi.new("unsigned char [32]")
++        self._rdy = GPIO(GPIO.get_gpio_pin(gpio), 'out')
++
++    def _read(self, reg_addr):
++        self._buffer[0] = reg_addr
++        self._master.send(self._address, self._buffer, 1, 1)
++        self._master.receive(self._address, self._buffer, 1)
++        self._master.wait()
++        # Clear all of the interrupts
++        self._master.write(0x20, self._master.read(0x20))
++        return self._buffer[0]
++
++    def _write(self, reg_addr, data):
++        self._buffer[0] = reg_addr
++        self._buffer[1] = data
++        self._master.send(self._address, self._buffer, 2)
++        self._master.wait()
++        # Clear all of the interrupts
++        self._master.write(0x20, self._master.read(0x20))
++
++    def _update(self, reg_addr, value, mask):
++        data = self._read(reg_addr)
++        data &= ~mask
++        data |= (value & mask)
++        self._write(reg_addr, data)
++
++    def read_rfreq(self):
++        rfreq = (self._read(0x0008) & 0x3F) << 32
++        rfreq |= self._read(0x0009) << 24
++        rfreq |= self._read(0x000A) << 16
++        rfreq |= self._read(0x000B) << 8
++        rfreq |= self._read(0x000C)
++        return rfreq
++
++    def set_rfreq(self, value):
++        self._update(0x0008, (value >> 32) & 0x3F, 0x3F)
++        self._write(0x0009, (value >> 24) & 0xFF)
++        self._write(0x000A, (value >> 16) & 0xFF)
++        self._write(0x000B, (value >> 8) & 0xFF)
++        self._write(0x000C, (value & 0xFF))
++
++    def read_hsdiv(self):
++        hsdiv = ((self._read(0x0007) & 0xE0) >> 5) + HS_DIV_OFFSET
++        return hsdiv
++
++    def set_hsdiv(self, value):
++        self._update(0x0007, ((value - HS_DIV_OFFSET) << 5) & 0x3F, 0x3F)
++
++    def read_n1(self):
++        n1 = (self._read(0x0007) & 0x1F) << 2
++        n1 |= (self._read(0x0008) & 0xC0) >> 6
++        n1 += 1
++        return n1
++
++    def set_n1(self, value):
++        self._update(0x0007, ((value - 1) >> 2) & 0x1F, 0x1F)
++        self._update(0x0008, ((value - 1) << 6) & 0xC0, 0xC0)
++
++    def freeze(self, active):
++        if active:
++            value = 0x10
++        else:
++            value = 0x00
++        self._update(0x0089, value, 0x10)
++
++    def recall(self, active):
++        if active:
++            value = 0x1
++        else:
++            value = 0x0
++        self._update(0x087, value, 0x1)
++
++    def new_freq(self):
++        self._update(0x085, 1 << 6, 1 << 6)
++
++    def set_clock(self, freq, line_rate):
++        self._set_clock(freq)
++
++    def _set_clock(self, fout):
++        if fout < SI570_FOUT_MIN:
++            raise RuntimeError("Output Frequency Below Minimum")
++        if fout > SI570_FOUT_MAX:
++            raise RuntimeError("Output Frequency Above Maximum")
++
++        fdco_min = SI570_FDCO_MAX
++
++        #settings = _calculate_settings(fin, fout)
++        self.recall(True)
++        time.sleep(0.015)
++        rfreq = self.read_rfreq()
++        hsdiv = self.read_hsdiv()
++        n1 = self.read_n1()
++
++        # Calculate the actual nominal crystal frequency
++        f_xtal = (SI570_FACTORY_FREQ * hsdiv * n1) / rfreq * 2**28
++
++        # Choose the output dividers
++        for i in range(4, 12):
++            for j in range(2, 128, 2):
++                fdco = fout * i * j
++                if(fdco > SI570_FDCO_MIN and fdco < SI570_FDCO_MAX):
++                    rfreq = fdco / f_xtal
++                    rfreq = int(rfreq * 2**28)
++                    if(fdco < fdco_min):
++                        fdco_min = fdco
++                        best_hs_div = i
++                        best_n1 = j
++
++        self._rdy.write(1)
++        self.freeze(False)
++        self.set_rfreq(rfreq)
++        self.set_hsdiv(best_hs_div)
++        self.set_n1(best_n1)
++        self.new_freq()
++        self.freeze(True)
++        self._rdy.write(0)
+diff --git a/sdbuild/Makefile b/sdbuild/Makefile
+index 3383c294..7397e569 100644
+--- a/sdbuild/Makefile
++++ b/sdbuild/Makefile
+@@ -143,7 +143,7 @@ $$(PL_PROJ_$1): $$(BSP_TARGET_$1)
+ 		-s $$(BSP_BUILD_$1)/$$(BSP_PROJECT_$1).bsp -n petalinux_project
+ 	echo 'CONFIG_USER_LAYER_0="'$(CURDIR)/boot/meta-pynq'"' >> $$(PL_CONFIG_$1)
+ 	echo 'CONFIG_SUBSYSTEM_ROOTFS_EXT4=y' >> $$(PL_CONFIG_$1)
+-	echo 'CONFIG_SUBSYSTEM_SDROOT_DEV="/dev/mmcblk0p2"' >> $$(PL_CONFIG_$1)
++	echo 'CONFIG_SUBSYSTEM_SDROOT_DEV="/dev/mmcblk1p2"' >> $$(PL_CONFIG_$1)
+ 	echo 'CONFIG_SUBSYSTEM_ETHERNET_MANUAL_SELECT=y' >> $$(PL_CONFIG_$1)
+ 	if [ $$(FPGA_MANAGER_$1) = 1 ]; then \
+ 		echo 'CONFIG_SUBSYSTEM_DEVICETREE_FLAGS="-@"' >> $$(PL_CONFIG_$1) ;\
+diff --git a/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_bootargs.dtsi b/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_bootargs.dtsi
+index f9964316..60275fe6 100644
+--- a/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_bootargs.dtsi
++++ b/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_bootargs.dtsi
+@@ -1,6 +1,6 @@
+ / {
+ 	chosen {
+-		bootargs = "root=/dev/mmcblk0p2 rw earlyprintk rootfstype=ext4 rootwait devtmpfs.mount=1 uio_pdrv_genirq.of_id=\"generic-uio\" clk_ignore_unused";
++		bootargs = "root=/dev/mmcblk1p2 rw earlyprintk rootfstype=ext4 rootwait devtmpfs.mount=1 uio_pdrv_genirq.of_id=\"generic-uio\" clk_ignore_unused";
+ 		pynq_board = "Unknown";
+ 	};
+ };
+diff --git a/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi b/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi
+index 0c0dea13..489ff139 100644
+--- a/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi
++++ b/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi
+@@ -1,2 +1,8 @@
+ /include/ "pynq_xlnk_zynqmp.dtsi"
+ /include/ "pynq_bootargs.dtsi"
++
++/*
++linux,cma {
++	alloc-ranges = <0x0 0x0 0x0 0x7ff00000>;
++};
++*/
+diff --git a/sdbuild/packages/sigrok/qemu.sh b/sdbuild/packages/sigrok/qemu.sh
+index 50a82706..4ba82289 100755
+--- a/sdbuild/packages/sigrok/qemu.sh
++++ b/sdbuild/packages/sigrok/qemu.sh
+@@ -19,7 +19,7 @@ mkdir sigrok_build
+ cd sigrok_build
+ 
+ wget http://sigrok.org/download/source/libsigrok/${libsigrok}.tar.gz
+-tar -xf ${libsigrok}.tar.gz
++tar -xzf ${libsigrok}.tar.gz
+ cd ${libsigrok}
+ ./configure --prefix=/opt/sigrok
+ make -j 4
+@@ -27,7 +27,7 @@ make install
+ cd ..
+ 
+ wget http://sigrok.org/download/source/libsigrokdecode/${libsigrokdecode}.tar.gz
+-tar -xf ${libsigrokdecode}.tar.gz
++tar -xzf ${libsigrokdecode}.tar.gz
+ cd ${libsigrokdecode}
+ patch -p2 -i $patch_file
+ export PKG_CONFIG_PATH=/opt/sigrok/lib/pkgconfig
+diff --git a/sdbuild/ubuntu/focal/aarch64/multistrap.config b/sdbuild/ubuntu/focal/aarch64/multistrap.config
+index dfc91c14..a77e30fe 100644
+--- a/sdbuild/ubuntu/focal/aarch64/multistrap.config
++++ b/sdbuild/ubuntu/focal/aarch64/multistrap.config
+@@ -6,7 +6,8 @@ allowrecommends=true
+ addimportant=true
+ 
+ [Focal]
+-source=http://ports.ubuntu.com/ubuntu-ports
++#source=http://ports.ubuntu.com/ubuntu-ports
++source=http://ubuntu.task.gda.pl/ubuntu/
+ suite=focal universe
+ keyring=ubuntu-keyring
+ packages=python3-networkx python3-lxml python3-numexpr
