@@ -49,7 +49,17 @@ Advanced users can build own image. The build process takes several hours to fin
 
 #### Build steps
 
-First step is to download Aldec TySOM-PYNQ repository:
+First step is to download Aldec TySOM-PYNQ repository.
+
+This repository contains larg files stored in Git Large File Storage (LFS). To clone this repository with LFS contents you should:
+
+Download and install [Git Large File Storage](https://git-lfs.github.com/).
+
+Set up Git LFS for your user account.
+```
+git lfs install
+```
+Clone the repository.
 ```
 git clone -b 2.7 https://github.com/aldec/TySOM-PYNQ.git
 cd TySOM-PYNQ
