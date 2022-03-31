@@ -25,8 +25,8 @@ The repository adds support for Aldec boards based on Xilinx Zynq Ultrascale+:
 
 ## Pre-built PYNQ images
 Download pre-built PYNQ 2.7.0 image for TySOM-3-ZU7EV or TySOM-3A-ZU19EG:
-- [TySOM-3-ZU7EV PYNQ v2.7 image](https://github.com/aldec/TySOM-3-ZU7EV/releases/download/pynq_v2.7/tysom3_v2.7.0.img.7z)
-- [TySOM-3A-ZU19EG PYNQ v2.7 image](https://github.com/aldec/TySOM-3A-ZU19EG/releases/download/pynq_v2.7/tysom3a_v2.7.0.img.7z)
+- [TySOM-3-ZU7EV PYNQ v2.7 image](https://github.com/aldec/TySOM-PYNQ/releases/download/2.7/tysom3_v2.7.0.img.7z)
+- [TySOM-3A-ZU19EG PYNQ v2.7 image](https://github.com/aldec/TySOM-PYNQ/releases/download/2.7/tysom3a_v2.7.0.img.7z)
 
 Using pre-built image is a preferred way to use PYNQ with TySOM boards.
 
