@@ -1,33 +1,7 @@
 
 ###############################################################################
- #  Copyright (c) 2018-2021, Xilinx, Inc.
- #  All rights reserved.
- #
- #  Redistribution and use in source and binary forms, with or without
- #  modification, are permitted provided that the following conditions are met:
- #
- #  1.  Redistributions of source code must retain the above copyright notice,
- #     this list of conditions and the following disclaimer.
- #
- #  2.  Redistributions in binary form must reproduce the above copyright
- #      notice, this list of conditions and the following disclaimer in the
- #      documentation and/or other materials provided with the distribution.
- #
- #  3.  Neither the name of the copyright holder nor the names of its
- #      contributors may be used to endorse or promote products derived from
- #      this software without specific prior written permission.
- #
- #  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- #  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- #  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- #  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- #  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- #  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- #  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- #  OR BUSINESS INTERRUPTION). HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- #  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #  Copyright (c) 2022-2023, Aldec, Inc.
+ #  SPDX-License-Identifier: BSD-3-Clause
  #
 ###############################################################################
 ###############################################################################
@@ -42,7 +16,8 @@
  #
  # Ver   Who  Date     Changes
  # ----- --- -------- -----------------------------------------------
- # 1.00a pz  02/11/2022 initial release
+ # 1.00a pz  03/15/2022 initial release
+ # 3.01  pz  08/02/2023 update to 2022.1
  #
  # </pre>
  #
@@ -69,7 +44,7 @@ set script_folder [_tcl::get_script_folder]
 ################################################################
 # Check if script is running in correct Vivado version.
 ################################################################
-set scripts_vivado_version 2020.2
+set scripts_vivado_version 2022.1
 set current_vivado_version [version -short]
 
 if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
@@ -168,44 +143,46 @@ if { $nRet != 0 } {
    return $nRet
 }
 
-set bCheckIPsPassed 1
-##################################################################
-# CHECK IPs
-##################################################################
-set bCheckIPs 1
-if { $bCheckIPs == 1 } {
-   set list_check_ips "\ 
-xilinx.com:ip:axi_intc:4.1\
-xilinx.com:ip:axi_register_slice:2.1\
-xilinx.com:ip:axi_iic:2.0\
-xilinx.com:ip:axi_gpio:2.0\
-xilinx.com:ip:xlslice:1.0\
-xilinx.com:ip:mdm:3.2\
-xilinx.com:ip:util_ds_buf:2.1\
-xilinx.com:ip:proc_sys_reset:5.0\
-xilinx.com:ip:zynq_ultra_ps_e:3.3\
-xilinx.com:ip:dfx_axi_shutdown_manager:1.0\
-xilinx.com:ip:xlconstant:1.1\
-xilinx.com:ip:xlconcat:2.1\
-xilinx.com:user:dff_en_reset_vector:1.0\
-xilinx.com:user:io_switch:1.1\
-xilinx.com:ip:microblaze:11.0\
-xilinx.com:ip:axi_bram_ctrl:4.1\
-xilinx.com:ip:axi_quad_spi:3.2\
-xilinx.com:ip:axi_timer:2.0\
-xilinx.com:ip:axi_vdma:6.3\
-xilinx.com:ip:lmb_v10:3.0\
-xilinx.com:ip:blk_mem_gen:8.4\
-xilinx.com:ip:lmb_bram_if_cntlr:4.0\
-xilinx.com:hls:color_convert_2:1.0\
-xilinx.com:ip:v_hdmi_rx_ss:3.1\
-xilinx.com:hls:pixel_pack_2:1.0\
-xilinx.com:ip:axis_subset_converter:1.1\
-xilinx.com:ip:axis_register_slice:1.1\
-xilinx.com:ip:v_hdmi_tx_ss:3.1\
-xilinx.com:hls:pixel_unpack_2:1.0\
-xilinx.com:ip:vid_phy_controller:2.2\
-"
+  set bCheckIPsPassed 1
+  ##################################################################
+  # CHECK IPs
+  ##################################################################
+  set bCheckIPs 1
+  if { $bCheckIPs == 1 } {
+     set list_check_ips "\ 
+  xilinx.com:ip:xlslice:1.0\
+  user.org:user:address_remap:1.0\
+  xilinx.com:ip:axi_iic:2.1\
+  xilinx.com:ip:axi_intc:4.1\
+  xilinx.com:ip:clk_wiz:6.0\
+  xilinx.com:ip:gmii_to_rgmii:4.1\
+  xilinx.com:ip:axi_gpio:2.0\
+  xilinx.com:ip:mdm:3.2\
+  xilinx.com:ip:util_ds_buf:2.2\
+  xilinx.com:ip:proc_sys_reset:5.0\
+  xilinx.com:ip:zynq_ultra_ps_e:3.4\
+  xilinx.com:ip:dfx_axi_shutdown_manager:1.0\
+  xilinx.com:ip:xlconstant:1.1\
+  xilinx.com:ip:xlconcat:2.1\
+  xilinx.com:user:dff_en_reset_vector:1.0\
+  xilinx.com:user:io_switch:1.1\
+  xilinx.com:ip:microblaze:11.0\
+  xilinx.com:ip:axi_bram_ctrl:4.1\
+  xilinx.com:ip:axi_quad_spi:3.2\
+  xilinx.com:ip:axi_timer:2.0\
+  xilinx.com:ip:axi_vdma:6.3\
+  xilinx.com:ip:lmb_v10:3.0\
+  xilinx.com:ip:blk_mem_gen:8.4\
+  xilinx.com:ip:lmb_bram_if_cntlr:4.0\
+  xilinx.com:hls:color_convert_2:1.0\
+  xilinx.com:ip:v_hdmi_rx_ss:3.2\
+  xilinx.com:hls:pixel_pack_2:1.0\
+  xilinx.com:ip:axis_subset_converter:1.1\
+  xilinx.com:ip:axis_register_slice:1.1\
+  xilinx.com:ip:v_hdmi_tx_ss:3.2\
+  xilinx.com:hls:pixel_unpack_2:1.0\
+  xilinx.com:ip:vid_phy_controller:2.2\
+  "
 
    set list_ips_missing ""
    common::send_gid_msg -ssname BD::TCL -id 2011 -severity "INFO" "Checking if the following IPs exist in the project's IP catalog: $list_check_ips ."
@@ -222,18 +199,14 @@ xilinx.com:ip:vid_phy_controller:2.2\
       set bCheckIPsPassed 0
    }
 
-}
+  }
 
-if { $bCheckIPsPassed != 1 } {
-  common::send_gid_msg -ssname BD::TCL -id 2023 -severity "WARNING" "Will not continue with creation of design due to the error(s) above."
-  return 3
-}
+  if { $bCheckIPsPassed != 1 } {
+    common::send_gid_msg -ssname BD::TCL -id 2023 -severity "WARNING" "Will not continue with creation of design due to the error(s) above."
+    return 3
+  }
 
-##################################################################
-# DESIGN PROCs
-##################################################################
-
-
+  
 # Hierarchical cell: phy
 proc create_hier_cell_phy { parentCell nameHier } {
 
@@ -314,25 +287,25 @@ proc create_hier_cell_phy { parentCell nameHier } {
   create_bd_pin -dir O -type clk vid_phy_tx_axi4s_aclk
 
   # Create instance: dru_ibufds_gt_odiv2, and set properties
-  set dru_ibufds_gt_odiv2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 dru_ibufds_gt_odiv2 ]
+  set dru_ibufds_gt_odiv2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 dru_ibufds_gt_odiv2 ]
   set_property -dict [ list \
    CONFIG.C_BUF_TYPE {BUFG_GT} \
  ] $dru_ibufds_gt_odiv2
 
   # Create instance: gt_refclk_buf, and set properties
-  set gt_refclk_buf [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 gt_refclk_buf ]
+  set gt_refclk_buf [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 gt_refclk_buf ]
   set_property -dict [ list \
    CONFIG.C_BUF_TYPE {IBUFDSGTE} \
  ] $gt_refclk_buf
 
   # Create instance: gt_refclk_buf1, and set properties
-  set gt_refclk_buf1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 gt_refclk_buf1 ]
+  set gt_refclk_buf1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 gt_refclk_buf1 ]
   set_property -dict [ list \
    CONFIG.C_BUF_TYPE {IBUFDSGTE} \
  ] $gt_refclk_buf1
 
   # Create instance: refclk_ibufds_gt_odiv2, and set properties
-  set refclk_ibufds_gt_odiv2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 refclk_ibufds_gt_odiv2 ]
+  set refclk_ibufds_gt_odiv2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 refclk_ibufds_gt_odiv2 ]
   set_property -dict [ list \
    CONFIG.C_BUF_TYPE {BUFG_GT} \
  ] $refclk_ibufds_gt_odiv2
@@ -427,7 +400,7 @@ proc create_hier_cell_phy { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 }
-
+  
 # Hierarchical cell: hdmi_out
 proc create_hier_cell_hdmi_out { parentCell nameHier } {
 
@@ -500,17 +473,16 @@ proc create_hier_cell_hdmi_out { parentCell nameHier } {
   set color_convert [ create_bd_cell -type ip -vlnv xilinx.com:hls:color_convert_2:1.0 color_convert ]
 
   # Create instance: frontend, and set properties
-  set frontend [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_tx_ss:3.1 frontend ]
+  set frontend [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_tx_ss:3.2 frontend ]
   set_property -dict [ list \
    CONFIG.C_ADDR_WIDTH {13} \
-   CONFIG.C_ADD_MARK_DBG {false} \
+   CONFIG.C_ADD_MARK_DBG {0} \
    CONFIG.C_EXDES_AXILITE_FREQ {100} \
    CONFIG.C_EXDES_NIDRU {true} \
    CONFIG.C_EXDES_RX_PLL_SELECTION {0} \
    CONFIG.C_EXDES_TOPOLOGY {0} \
    CONFIG.C_EXDES_TX_PLL_SELECTION {6} \
    CONFIG.C_HDMI_FAST_SWITCH {true} \
-   CONFIG.C_HDMI_VERSION {3} \
    CONFIG.C_HPD_INVERT {false} \
    CONFIG.C_HYSTERESIS_LEVEL {12} \
    CONFIG.C_INCLUDE_HDCP_1_4 {false} \
@@ -530,10 +502,6 @@ proc create_hier_cell_hdmi_out { parentCell nameHier } {
    CONFIG.M_TDATA_NUM_BYTES {6} \
    CONFIG.S_TDATA_NUM_BYTES {6} \
    CONFIG.TDATA_REMAP {tdata[47:40],tdata[31:24],tdata[39:32],tdata[23:16],tdata[7:0],tdata[15:8]} \
-   CONFIG.TKEEP_REMAP {1'b0} \
-   CONFIG.TLAST_REMAP {1'b0} \
-   CONFIG.TSTRB_REMAP {1'b0} \
-   CONFIG.TUSER_REMAP {1'b0} \
  ] $pixel_reorder
 
   # Create instance: pixel_unpack, and set properties
@@ -575,7 +543,7 @@ proc create_hier_cell_hdmi_out { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 }
-
+  
 # Hierarchical cell: hdmi_in
 proc create_hier_cell_hdmi_in { parentCell nameHier } {
 
@@ -647,15 +615,14 @@ proc create_hier_cell_hdmi_in { parentCell nameHier } {
   set color_convert [ create_bd_cell -type ip -vlnv xilinx.com:hls:color_convert_2:1.0 color_convert ]
 
   # Create instance: frontend, and set properties
-  set frontend [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_rx_ss:3.1 frontend ]
+  set frontend [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_rx_ss:3.2 frontend ]
   set_property -dict [ list \
    CONFIG.C_ADDR_WIDTH {10} \
-   CONFIG.C_ADD_MARK_DBG {false} \
+   CONFIG.C_ADD_MARK_DBG {0} \
    CONFIG.C_CD_INVERT {true} \
    CONFIG.C_EDID_RAM_SIZE {256} \
    CONFIG.C_EXDES_TX_PLL_SELECTION {6} \
    CONFIG.C_HDMI_FAST_SWITCH {true} \
-   CONFIG.C_HDMI_VERSION {3} \
    CONFIG.C_HPD_INVERT {false} \
    CONFIG.C_INCLUDE_HDCP_1_4 {false} \
    CONFIG.C_INCLUDE_HDCP_2_2 {false} \
@@ -676,8 +643,6 @@ proc create_hier_cell_hdmi_in { parentCell nameHier } {
    CONFIG.M_TDATA_NUM_BYTES {6} \
    CONFIG.S_TDATA_NUM_BYTES {6} \
    CONFIG.TDATA_REMAP {tdata[47:40],tdata[31:24],tdata[39:32],tdata[23:16],tdata[7:0],tdata[15:8]} \
-   CONFIG.TLAST_REMAP {1'b0} \
-   CONFIG.TUSER_REMAP {1'b0} \
  ] $pixel_reorder
 
   # Create instance: rx_video_axis_reg_slice, and set properties
@@ -714,7 +679,7 @@ proc create_hier_cell_hdmi_in { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 }
-
+  
 # Hierarchical cell: lmb
 proc create_hier_cell_lmb { parentCell nameHier } {
 
@@ -801,7 +766,7 @@ proc create_hier_cell_lmb { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 }
-
+  
 # Hierarchical cell: video
 proc create_hier_cell_video { parentCell nameHier } {
 
@@ -978,7 +943,7 @@ proc create_hier_cell_video { parentCell nameHier } {
   # Restore current instance
   current_bd_instance $oldCurInst
 }
-
+  
 # Hierarchical cell: iop_pmod0
 proc create_hier_cell_iop_pmod0 { parentCell nameHier } {
 
@@ -1049,7 +1014,7 @@ proc create_hier_cell_iop_pmod0 { parentCell nameHier } {
  ] $gpio
 
   # Create instance: iic, and set properties
-  set iic [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.0 iic ]
+  set iic [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.1 iic ]
 
   # Create instance: intc, and set properties
   set intc [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_intc:4.1 intc ]
@@ -1089,15 +1054,18 @@ proc create_hier_cell_iop_pmod0 { parentCell nameHier } {
   # Create instance: mb, and set properties
   set mb [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze:11.0 mb ]
   set_property -dict [ list \
+   CONFIG.C_DCACHE_HIGHADDR {0x000000003fffffff} \
    CONFIG.C_DEBUG_ENABLED {1} \
    CONFIG.C_D_AXI {1} \
    CONFIG.C_D_LMB {1} \
+   CONFIG.C_ICACHE_HIGHADDR {0x000000003fffffff} \
    CONFIG.C_I_LMB {1} \
  ] $mb
 
   # Create instance: mb_bram_ctrl, and set properties
   set mb_bram_ctrl [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.1 mb_bram_ctrl ]
   set_property -dict [ list \
+   CONFIG.ECC_TYPE {0} \
    CONFIG.SINGLE_PORT_BRAM {1} \
  ] $mb_bram_ctrl
 
@@ -1179,13 +1147,11 @@ proc create_hier_cell_iop_pmod0 { parentCell nameHier } {
   current_bd_instance $oldCurInst
 }
 
-
 # Procedure to create entire design; Provide argument to make
 # procedure reusable. If parentCell is "", will use root.
 proc create_root_design { parentCell } {
 
   variable script_folder
-  variable design_name
 
   if { $parentCell eq "" } {
      set parentCell [get_bd_cells /]
@@ -1300,7 +1266,7 @@ proc create_root_design { parentCell } {
  ] $address_remap_0
 
   # Create instance: axi_iic_0, and set properties
-  set axi_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.0 axi_iic_0 ]
+  set axi_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.1 axi_iic_0 ]
   set_property -dict [ list \
    CONFIG.IIC_FREQ_KHZ {100} \
  ] $axi_iic_0
@@ -1339,10 +1305,13 @@ proc create_root_design { parentCell } {
   # Create instance: clk_wiz_0, and set properties
   set clk_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz_0 ]
   set_property -dict [ list \
+   CONFIG.CLKIN1_JITTER_PS {200.0} \
    CONFIG.CLKOUT1_JITTER {110.649} \
    CONFIG.CLKOUT1_PHASE_ERROR {152.150} \
    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {375.000} \
    CONFIG.MMCM_CLKFBOUT_MULT_F {24.375} \
+   CONFIG.MMCM_CLKIN1_PERIOD {20.000} \
+   CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
    CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.250} \
    CONFIG.MMCM_DIVCLK_DIVIDE {1} \
    CONFIG.PRIM_SOURCE {No_buffer} \
@@ -1351,7 +1320,7 @@ proc create_root_design { parentCell } {
  ] $clk_wiz_0
 
   # Create instance: fmch_axi_iic, and set properties
-  set fmch_axi_iic [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.0 fmch_axi_iic ]
+  set fmch_axi_iic [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.1 fmch_axi_iic ]
   set_property -dict [ list \
    CONFIG.C_SCL_INERTIAL_DELAY {10} \
    CONFIG.C_SDA_INERTIAL_DELAY {10} \
@@ -1416,7 +1385,7 @@ proc create_root_design { parentCell } {
  ] $mdm
 
   # Create instance: pmod0_buf, and set properties
-  set pmod0_buf [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 pmod0_buf ]
+  set pmod0_buf [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 pmod0_buf ]
   set_property -dict [ list \
    CONFIG.C_BUF_TYPE {IOBUF} \
    CONFIG.C_SIZE {8} \
@@ -1435,7 +1404,7 @@ proc create_root_design { parentCell } {
   set proc_sys_reset_3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 proc_sys_reset_3 ]
 
   # Create instance: ps_e_0, and set properties
-  set ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.3 ps_e_0 ]
+  set ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.4 ps_e_0 ]
   set_property -dict [ list \
    CONFIG.CAN0_BOARD_INTERFACE {custom} \
    CONFIG.CAN1_BOARD_INTERFACE {custom} \
@@ -1929,8 +1898,16 @@ proc create_root_design { parentCell } {
    CONFIG.PSU_MIO_9_POLARITY {Default} \
    CONFIG.PSU_MIO_9_PULLUPDOWN {pullup} \
    CONFIG.PSU_MIO_9_SLEW {fast} \
-   CONFIG.PSU_MIO_TREE_PERIPHERALS {Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#GPIO0 MIO#GPIO0 MIO#CAN 1#CAN 1#GPIO0 MIO#GPIO0 MIO#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#GPIO1 MIO#NAND#GPIO1 MIO#PCIE#I2C 0#I2C 0#UART 1#UART 1#DPAUX#DPAUX#DPAUX#DPAUX#SD 0#GPIO1 MIO#SD 0#SD 0#SD 0#SD 0#SD 0#SD 1#SD 1#SD 1#SD 1#SD 1#SD 1#SD 1#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#MDIO 2#MDIO 2} \
-   CONFIG.PSU_MIO_TREE_SIGNALS {sclk_out#miso_mo1#mo2#mo3#mosi_mi0#n_ss_out#gpio0[6]#gpio0[7]#phy_tx#phy_rx#gpio0[10]#gpio0[11]#nfc_dqs_out#nfc_ce[0]#nfc_cle#nfc_ale#nfc_dq_out[0]#nfc_dq_out[1]#nfc_dq_out[2]#nfc_dq_out[3]#nfc_dq_out[4]#nfc_dq_out[5]#nfc_we_b#nfc_dq_out[6]#nfc_dq_out[7]#nfc_re_n#gpio1[26]#nfc_rb_n[0]#gpio1[28]#reset_n#scl_out#sda_out#txd#rxd#dp_aux_data_out#dp_hot_plug_detect#dp_aux_data_oe#dp_aux_data_in#sdio0_clk_out#gpio1[39]#sdio0_cmd_out#sdio0_data_out[0]#sdio0_data_out[1]#sdio0_data_out[2]#sdio0_data_out[3]#sdio1_cd_n#sdio1_data_out[0]#sdio1_data_out[1]#sdio1_data_out[2]#sdio1_data_out[3]#sdio1_cmd_out#sdio1_clk_out#rgmii_tx_clk#rgmii_txd[0]#rgmii_txd[1]#rgmii_txd[2]#rgmii_txd[3]#rgmii_tx_ctl#rgmii_rx_clk#rgmii_rxd[0]#rgmii_rxd[1]#rgmii_rxd[2]#rgmii_rxd[3]#rgmii_rx_ctl#ulpi_clk_in#ulpi_dir#ulpi_tx_data[2]#ulpi_nxt#ulpi_tx_data[0]#ulpi_tx_data[1]#ulpi_stp#ulpi_tx_data[3]#ulpi_tx_data[4]#ulpi_tx_data[5]#ulpi_tx_data[6]#ulpi_tx_data[7]#gem2_mdc#gem2_mdio_out} \
+   CONFIG.PSU_MIO_TREE_PERIPHERALS {\
+Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad\
+SPI Flash#GPIO0 MIO#GPIO0 MIO#CAN 1#CAN 1#GPIO0 MIO#GPIO0\
+MIO#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#NAND#GPIO1\
+MIO#NAND#GPIO1 MIO#PCIE#I2C 0#I2C 0#UART 1#UART 1#DPAUX#DPAUX#DPAUX#DPAUX#SD\
+0#GPIO1 MIO#SD 0#SD 0#SD 0#SD 0#SD 0#SD 1#SD 1#SD 1#SD 1#SD 1#SD 1#SD 1#Gem\
+2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#Gem 2#USB 1#USB\
+1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#USB 1#MDIO 2#MDIO 2} \
+   CONFIG.PSU_MIO_TREE_SIGNALS {\
+sclk_out#miso_mo1#mo2#mo3#mosi_mi0#n_ss_out#gpio0[6]#gpio0[7]#phy_tx#phy_rx#gpio0[10]#gpio0[11]#nfc_dqs_out#nfc_ce[0]#nfc_cle#nfc_ale#nfc_dq_out[0]#nfc_dq_out[1]#nfc_dq_out[2]#nfc_dq_out[3]#nfc_dq_out[4]#nfc_dq_out[5]#nfc_we_b#nfc_dq_out[6]#nfc_dq_out[7]#nfc_re_n#gpio1[26]#nfc_rb_n[0]#gpio1[28]#reset_n#scl_out#sda_out#txd#rxd#dp_aux_data_out#dp_hot_plug_detect#dp_aux_data_oe#dp_aux_data_in#sdio0_clk_out#gpio1[39]#sdio0_cmd_out#sdio0_data_out[0]#sdio0_data_out[1]#sdio0_data_out[2]#sdio0_data_out[3]#sdio1_cd_n#sdio1_data_out[0]#sdio1_data_out[1]#sdio1_data_out[2]#sdio1_data_out[3]#sdio1_cmd_out#sdio1_clk_out#rgmii_tx_clk#rgmii_txd[0]#rgmii_txd[1]#rgmii_txd[2]#rgmii_txd[3]#rgmii_tx_ctl#rgmii_rx_clk#rgmii_rxd[0]#rgmii_rxd[1]#rgmii_rxd[2]#rgmii_rxd[3]#rgmii_rx_ctl#ulpi_clk_in#ulpi_dir#ulpi_tx_data[2]#ulpi_nxt#ulpi_tx_data[0]#ulpi_tx_data[1]#ulpi_stp#ulpi_tx_data[3]#ulpi_tx_data[4]#ulpi_tx_data[5]#ulpi_tx_data[6]#ulpi_tx_data[7]#gem2_mdc#gem2_mdio_out} \
    CONFIG.PSU_PERIPHERAL_BOARD_PRESET {} \
    CONFIG.PSU_SD0_INTERNAL_BUS_WIDTH {4} \
    CONFIG.PSU_SD1_INTERNAL_BUS_WIDTH {4} \
@@ -2427,7 +2404,7 @@ proc create_root_design { parentCell } {
    CONFIG.PSU__ENET0__PTP__ENABLE {0} \
    CONFIG.PSU__ENET0__TSU__ENABLE {0} \
    CONFIG.PSU__ENET1__FIFO__ENABLE {0} \
-   CONFIG.PSU__ENET1__GRP_MDIO__ENABLE {1} \
+   CONFIG.PSU__ENET1__GRP_MDIO__ENABLE {0} \
    CONFIG.PSU__ENET1__GRP_MDIO__IO {EMIO} \
    CONFIG.PSU__ENET1__PERIPHERAL__ENABLE {1} \
    CONFIG.PSU__ENET1__PERIPHERAL__IO {EMIO} \
@@ -2777,16 +2754,42 @@ proc create_root_design { parentCell } {
    CONFIG.PSU__PROTECTION__DDR_SEGMENTS {NONE} \
    CONFIG.PSU__PROTECTION__DEBUG {0} \
    CONFIG.PSU__PROTECTION__ENABLE {0} \
-   CONFIG.PSU__PROTECTION__FPD_SEGMENTS {SA:0xFD1A0000 ;SIZE:1280;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD000000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD010000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD020000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD030000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD040000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD050000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD610000 ;SIZE:512;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware    |    SA:0xFD5D0000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware} \
+   CONFIG.PSU__PROTECTION__FPD_SEGMENTS {\
+SA:0xFD1A0000 ;SIZE:1280;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware     |     SA:0xFD000000\
+;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU\
+Firmware     |     SA:0xFD010000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware     |     SA:0xFD020000\
+;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU\
+Firmware     |     SA:0xFD030000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware     |     SA:0xFD040000\
+;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU\
+Firmware     |     SA:0xFD050000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware     |     SA:0xFD610000\
+;SIZE:512;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU\
+Firmware     |     SA:0xFD5D0000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware} \
    CONFIG.PSU__PROTECTION__LOCK_UNUSED_SEGMENTS {0} \
-   CONFIG.PSU__PROTECTION__LPD_SEGMENTS {SA:0xFF980000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFF5E0000 ;SIZE:2560;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFFCC0000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFF180000 ;SIZE:768;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFF410000 ;SIZE:640;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFFA70000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFF9A0000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware} \
-   CONFIG.PSU__PROTECTION__MASTERS {USB1:NonSecure;1|USB0:NonSecure;0|S_AXI_LPD:NA;1|S_AXI_HPC1_FPD:NA;0|S_AXI_HPC0_FPD:NA;0|S_AXI_HP3_FPD:NA;0|S_AXI_HP2_FPD:NA;1|S_AXI_HP1_FPD:NA;0|S_AXI_HP0_FPD:NA;1|S_AXI_ACP:NA;0|S_AXI_ACE:NA;0|SD1:NonSecure;1|SD0:NonSecure;1|SATA1:NonSecure;1|SATA0:NonSecure;1|RPU1:Secure;1|RPU0:Secure;1|QSPI:NonSecure;1|PMU:NA;1|PCIe:NonSecure;1|NAND:NonSecure;1|LDMA:NonSecure;1|GPU:NonSecure;1|GEM3:NonSecure;0|GEM2:NonSecure;1|GEM1:NonSecure;1|GEM0:NonSecure;0|FDMA:NonSecure;1|DP:NonSecure;1|DAP:NA;1|Coresight:NA;1|CSU:NA;1|APU:NA;1} \
-   CONFIG.PSU__PROTECTION__MASTERS_TZ {GEM0:NonSecure|SD1:NonSecure|GEM2:NonSecure|GEM1:NonSecure|GEM3:NonSecure|PCIe:NonSecure|DP:NonSecure|NAND:NonSecure|GPU:NonSecure|USB1:NonSecure|USB0:NonSecure|LDMA:NonSecure|FDMA:NonSecure|QSPI:NonSecure|SD0:NonSecure} \
+   CONFIG.PSU__PROTECTION__LPD_SEGMENTS {\
+SA:0xFF980000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFF5E0000 ;SIZE:2560;UNIT:KB\
+;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFFCC0000\
+;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU\
+Firmware|SA:0xFF180000 ;SIZE:768;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFF410000 ;SIZE:640;UNIT:KB\
+;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU Firmware|SA:0xFFA70000\
+;SIZE:64;UNIT:KB ;RegionTZ:Secure ;WrAllowed:Read/Write;subsystemId:PMU\
+Firmware|SA:0xFF9A0000 ;SIZE:64;UNIT:KB ;RegionTZ:Secure\
+;WrAllowed:Read/Write;subsystemId:PMU Firmware} \
+   CONFIG.PSU__PROTECTION__MASTERS {\
+USB1:NonSecure;1|USB0:NonSecure;0|S_AXI_LPD:NA;1|S_AXI_HPC1_FPD:NA;0|S_AXI_HPC0_FPD:NA;0|S_AXI_HP3_FPD:NA;0|S_AXI_HP2_FPD:NA;1|S_AXI_HP1_FPD:NA;0|S_AXI_HP0_FPD:NA;1|S_AXI_ACP:NA;0|S_AXI_ACE:NA;0|SD1:NonSecure;1|SD0:NonSecure;1|SATA1:NonSecure;1|SATA0:NonSecure;1|RPU1:Secure;1|RPU0:Secure;1|QSPI:NonSecure;1|PMU:NA;1|PCIe:NonSecure;1|NAND:NonSecure;1|LDMA:NonSecure;1|GPU:NonSecure;1|GEM3:NonSecure;0|GEM2:NonSecure;1|GEM1:NonSecure;1|GEM0:NonSecure;0|FDMA:NonSecure;1|DP:NonSecure;1|DAP:NA;1|Coresight:NA;1|CSU:NA;1|APU:NA;1} \
+   CONFIG.PSU__PROTECTION__MASTERS_TZ {\
+GEM0:NonSecure|SD1:NonSecure|GEM2:NonSecure|GEM1:NonSecure|GEM3:NonSecure|PCIe:NonSecure|DP:NonSecure|NAND:NonSecure|GPU:NonSecure|USB1:NonSecure|USB0:NonSecure|LDMA:NonSecure|FDMA:NonSecure|QSPI:NonSecure|SD0:NonSecure} \
    CONFIG.PSU__PROTECTION__OCM_SEGMENTS {NONE} \
    CONFIG.PSU__PROTECTION__PRESUBSYSTEMS {NONE} \
-   CONFIG.PSU__PROTECTION__SLAVES { \
-     LPD;USB3_1_XHCI;FE300000;FE3FFFFF;1|LPD;USB3_1;FF9E0000;FF9EFFFF;1|LPD;USB3_0_XHCI;FE200000;FE2FFFFF;0|LPD;USB3_0;FF9D0000;FF9DFFFF;0|LPD;UART1;FF010000;FF01FFFF;1|LPD;UART0;FF000000;FF00FFFF;1|LPD;TTC3;FF140000;FF14FFFF;0|LPD;TTC2;FF130000;FF13FFFF;0|LPD;TTC1;FF120000;FF12FFFF;0|LPD;TTC0;FF110000;FF11FFFF;0|FPD;SWDT1;FD4D0000;FD4DFFFF;0|LPD;SWDT0;FF150000;FF15FFFF;0|LPD;SPI1;FF050000;FF05FFFF;0|LPD;SPI0;FF040000;FF04FFFF;0|FPD;SMMU_REG;FD5F0000;FD5FFFFF;1|FPD;SMMU;FD800000;FDFFFFFF;1|FPD;SIOU;FD3D0000;FD3DFFFF;1|FPD;SERDES;FD400000;FD47FFFF;1|LPD;SD1;FF170000;FF17FFFF;1|LPD;SD0;FF160000;FF16FFFF;1|FPD;SATA;FD0C0000;FD0CFFFF;1|LPD;RTC;FFA60000;FFA6FFFF;1|LPD;RSA_CORE;FFCE0000;FFCEFFFF;1|LPD;RPU;FF9A0000;FF9AFFFF;1|LPD;R5_TCM_RAM_GLOBAL;FFE00000;FFE3FFFF;1|LPD;R5_1_Instruction_Cache;FFEC0000;FFECFFFF;1|LPD;R5_1_Data_Cache;FFED0000;FFEDFFFF;1|LPD;R5_1_BTCM_GLOBAL;FFEB0000;FFEBFFFF;1|LPD;R5_1_ATCM_GLOBAL;FFE90000;FFE9FFFF;1|LPD;R5_0_Instruction_Cache;FFE40000;FFE4FFFF;1|LPD;R5_0_Data_Cache;FFE50000;FFE5FFFF;1|LPD;R5_0_BTCM_GLOBAL;FFE20000;FFE2FFFF;1|LPD;R5_0_ATCM_GLOBAL;FFE00000;FFE0FFFF;1|LPD;QSPI_Linear_Address;C0000000;DFFFFFFF;1|LPD;QSPI;FF0F0000;FF0FFFFF;1|LPD;PMU_RAM;FFDC0000;FFDDFFFF;1|LPD;PMU_GLOBAL;FFD80000;FFDBFFFF;1|FPD;PCIE_MAIN;FD0E0000;FD0EFFFF;1|FPD;PCIE_LOW;E0000000;EFFFFFFF;1|FPD;PCIE_HIGH2;8000000000;BFFFFFFFFF;1|FPD;PCIE_HIGH1;600000000;7FFFFFFFF;1|FPD;PCIE_DMA;FD0F0000;FD0FFFFF;1|FPD;PCIE_ATTRIB;FD480000;FD48FFFF;1|LPD;OCM_XMPU_CFG;FFA70000;FFA7FFFF;1|LPD;OCM_SLCR;FF960000;FF96FFFF;1|OCM;OCM;FFFC0000;FFFFFFFF;1|LPD;NAND;FF100000;FF10FFFF;1|LPD;MBISTJTAG;FFCF0000;FFCFFFFF;1|LPD;LPD_XPPU_SINK;FF9C0000;FF9CFFFF;1|LPD;LPD_XPPU;FF980000;FF98FFFF;1|LPD;LPD_SLCR_SECURE;FF4B0000;FF4DFFFF;1|LPD;LPD_SLCR;FF410000;FF4AFFFF;1|LPD;LPD_GPV;FE100000;FE1FFFFF;1|LPD;LPD_DMA_7;FFAF0000;FFAFFFFF;1|LPD;LPD_DMA_6;FFAE0000;FFAEFFFF;1|LPD;LPD_DMA_5;FFAD0000;FFADFFFF;1|LPD;LPD_DMA_4;FFAC0000;FFACFFFF;1|LPD;LPD_DMA_3;FFAB0000;FFABFFFF;1|LPD;LPD_DMA_2;FFAA0000;FFAAFFFF;1|LPD;LPD_DMA_1;FFA90000;FFA9FFFF;1|LPD;LPD_DMA_0;FFA80000;FFA8FFFF;1|LPD;IPI_CTRL;FF380000;FF3FFFFF;1|LPD;IOU_SLCR;FF180000;FF23FFFF;1|LPD;IOU_SECURE_SLCR;FF240000;FF24FFFF;1|LPD;IOU_SCNTRS;FF260000;FF26FFFF;1|LPD;IOU_SCNTR;FF250000;FF25FFFF;1|LPD;IOU_GPV;FE000000;FE0FFFFF;1|LPD;I2C1;FF030000;FF03FFFF;1|LPD;I2C0;FF020000;FF02FFFF;1|FPD;GPU;FD4B0000;FD4BFFFF;1|LPD;GPIO;FF0A0000;FF0AFFFF;1|LPD;GEM3;FF0E0000;FF0EFFFF;0|LPD;GEM2;FF0D0000;FF0DFFFF;1|LPD;GEM1;FF0C0000;FF0CFFFF;1|LPD;GEM0;FF0B0000;FF0BFFFF;0|FPD;FPD_XMPU_SINK;FD4F0000;FD4FFFFF;1|FPD;FPD_XMPU_CFG;FD5D0000;FD5DFFFF;1|FPD;FPD_SLCR_SECURE;FD690000;FD6CFFFF;1|FPD;FPD_SLCR;FD610000;FD68FFFF;1|FPD;FPD_DMA_CH7;FD570000;FD57FFFF;1|FPD;FPD_DMA_CH6;FD560000;FD56FFFF;1|FPD;FPD_DMA_CH5;FD550000;FD55FFFF;1|FPD;FPD_DMA_CH4;FD540000;FD54FFFF;1|FPD;FPD_DMA_CH3;FD530000;FD53FFFF;1|FPD;FPD_DMA_CH2;FD520000;FD52FFFF;1|FPD;FPD_DMA_CH1;FD510000;FD51FFFF;1|FPD;FPD_DMA_CH0;FD500000;FD50FFFF;1|LPD;EFUSE;FFCC0000;FFCCFFFF;1|FPD;Display Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD050000;FD05FFFF;1|FPD;DDR_XMPU4_CFG;FD040000;FD04FFFF;1|FPD;DDR_XMPU3_CFG;FD030000;FD03FFFF;1|FPD;DDR_XMPU2_CFG;FD020000;FD02FFFF;1|FPD;DDR_XMPU1_CFG;FD010000;FD01FFFF;1|FPD;DDR_XMPU0_CFG;FD000000;FD00FFFF;1|FPD;DDR_QOS_CTRL;FD090000;FD09FFFF;1|FPD;DDR_PHY;FD080000;FD08FFFF;1|DDR;DDR_LOW;0;7FFFFFFF;1|DDR;DDR_HIGH;800000000;97FFFFFFF;1|FPD;DDDR_CTRL;FD070000;FD070FFF;1|LPD;Coresight;FE800000;FEFFFFFF;1|LPD;CSU_DMA;FFC80000;FFC9FFFF;1|LPD;CSU;FFCA0000;FFCAFFFF;1|LPD;CRL_APB;FF5E0000;FF85FFFF;1|FPD;CRF_APB;FD1A0000;FD2DFFFF;1|FPD;CCI_REG;FD5E0000;FD5EFFFF;1|LPD;CAN1;FF070000;FF07FFFF;1|LPD;CAN0;FF060000;FF06FFFF;0|FPD;APU;FD5C0000;FD5CFFFF;1|LPD;APM_INTC_IOU;FFA20000;FFA2FFFF;1|LPD;APM_FPD_LPD;FFA30000;FFA3FFFF;1|FPD;APM_5;FD490000;FD49FFFF;1|FPD;APM_0;FD0B0000;FD0BFFFF;1|LPD;APM2;FFA10000;FFA1FFFF;1|LPD;APM1;FFA00000;FFA0FFFF;1|LPD;AMS;FFA50000;FFA5FFFF;1|FPD;AFI_5;FD3B0000;FD3BFFFF;1|FPD;AFI_4;FD3A0000;FD3AFFFF;1|FPD;AFI_3;FD390000;FD39FFFF;1|FPD;AFI_2;FD380000;FD38FFFF;1|FPD;AFI_1;FD370000;FD37FFFF;1|FPD;AFI_0;FD360000;FD36FFFF;1|LPD;AFIFM6;FF9B0000;FF9BFFFF;1|FPD;ACPU_GIC;F9010000;F907FFFF;1 \
-   } \
+   CONFIG.PSU__PROTECTION__SLAVES {\
+LPD;USB3_1_XHCI;FE300000;FE3FFFFF;1|LPD;USB3_1;FF9E0000;FF9EFFFF;1|LPD;USB3_0_XHCI;FE200000;FE2FFFFF;0|LPD;USB3_0;FF9D0000;FF9DFFFF;0|LPD;UART1;FF010000;FF01FFFF;1|LPD;UART0;FF000000;FF00FFFF;1|LPD;TTC3;FF140000;FF14FFFF;0|LPD;TTC2;FF130000;FF13FFFF;0|LPD;TTC1;FF120000;FF12FFFF;0|LPD;TTC0;FF110000;FF11FFFF;0|FPD;SWDT1;FD4D0000;FD4DFFFF;0|LPD;SWDT0;FF150000;FF15FFFF;0|LPD;SPI1;FF050000;FF05FFFF;0|LPD;SPI0;FF040000;FF04FFFF;0|FPD;SMMU_REG;FD5F0000;FD5FFFFF;1|FPD;SMMU;FD800000;FDFFFFFF;1|FPD;SIOU;FD3D0000;FD3DFFFF;1|FPD;SERDES;FD400000;FD47FFFF;1|LPD;SD1;FF170000;FF17FFFF;1|LPD;SD0;FF160000;FF16FFFF;1|FPD;SATA;FD0C0000;FD0CFFFF;1|LPD;RTC;FFA60000;FFA6FFFF;1|LPD;RSA_CORE;FFCE0000;FFCEFFFF;1|LPD;RPU;FF9A0000;FF9AFFFF;1|LPD;R5_TCM_RAM_GLOBAL;FFE00000;FFE3FFFF;1|LPD;R5_1_Instruction_Cache;FFEC0000;FFECFFFF;1|LPD;R5_1_Data_Cache;FFED0000;FFEDFFFF;1|LPD;R5_1_BTCM_GLOBAL;FFEB0000;FFEBFFFF;1|LPD;R5_1_ATCM_GLOBAL;FFE90000;FFE9FFFF;1|LPD;R5_0_Instruction_Cache;FFE40000;FFE4FFFF;1|LPD;R5_0_Data_Cache;FFE50000;FFE5FFFF;1|LPD;R5_0_BTCM_GLOBAL;FFE20000;FFE2FFFF;1|LPD;R5_0_ATCM_GLOBAL;FFE00000;FFE0FFFF;1|LPD;QSPI_Linear_Address;C0000000;DFFFFFFF;1|LPD;QSPI;FF0F0000;FF0FFFFF;1|LPD;PMU_RAM;FFDC0000;FFDDFFFF;1|LPD;PMU_GLOBAL;FFD80000;FFDBFFFF;1|FPD;PCIE_MAIN;FD0E0000;FD0EFFFF;1|FPD;PCIE_LOW;E0000000;EFFFFFFF;1|FPD;PCIE_HIGH2;8000000000;BFFFFFFFFF;1|FPD;PCIE_HIGH1;600000000;7FFFFFFFF;1|FPD;PCIE_DMA;FD0F0000;FD0FFFFF;1|FPD;PCIE_ATTRIB;FD480000;FD48FFFF;1|LPD;OCM_XMPU_CFG;FFA70000;FFA7FFFF;1|LPD;OCM_SLCR;FF960000;FF96FFFF;1|OCM;OCM;FFFC0000;FFFFFFFF;1|LPD;NAND;FF100000;FF10FFFF;1|LPD;MBISTJTAG;FFCF0000;FFCFFFFF;1|LPD;LPD_XPPU_SINK;FF9C0000;FF9CFFFF;1|LPD;LPD_XPPU;FF980000;FF98FFFF;1|LPD;LPD_SLCR_SECURE;FF4B0000;FF4DFFFF;1|LPD;LPD_SLCR;FF410000;FF4AFFFF;1|LPD;LPD_GPV;FE100000;FE1FFFFF;1|LPD;LPD_DMA_7;FFAF0000;FFAFFFFF;1|LPD;LPD_DMA_6;FFAE0000;FFAEFFFF;1|LPD;LPD_DMA_5;FFAD0000;FFADFFFF;1|LPD;LPD_DMA_4;FFAC0000;FFACFFFF;1|LPD;LPD_DMA_3;FFAB0000;FFABFFFF;1|LPD;LPD_DMA_2;FFAA0000;FFAAFFFF;1|LPD;LPD_DMA_1;FFA90000;FFA9FFFF;1|LPD;LPD_DMA_0;FFA80000;FFA8FFFF;1|LPD;IPI_CTRL;FF380000;FF3FFFFF;1|LPD;IOU_SLCR;FF180000;FF23FFFF;1|LPD;IOU_SECURE_SLCR;FF240000;FF24FFFF;1|LPD;IOU_SCNTRS;FF260000;FF26FFFF;1|LPD;IOU_SCNTR;FF250000;FF25FFFF;1|LPD;IOU_GPV;FE000000;FE0FFFFF;1|LPD;I2C1;FF030000;FF03FFFF;1|LPD;I2C0;FF020000;FF02FFFF;1|FPD;GPU;FD4B0000;FD4BFFFF;1|LPD;GPIO;FF0A0000;FF0AFFFF;1|LPD;GEM3;FF0E0000;FF0EFFFF;0|LPD;GEM2;FF0D0000;FF0DFFFF;1|LPD;GEM1;FF0C0000;FF0CFFFF;1|LPD;GEM0;FF0B0000;FF0BFFFF;0|FPD;FPD_XMPU_SINK;FD4F0000;FD4FFFFF;1|FPD;FPD_XMPU_CFG;FD5D0000;FD5DFFFF;1|FPD;FPD_SLCR_SECURE;FD690000;FD6CFFFF;1|FPD;FPD_SLCR;FD610000;FD68FFFF;1|FPD;FPD_DMA_CH7;FD570000;FD57FFFF;1|FPD;FPD_DMA_CH6;FD560000;FD56FFFF;1|FPD;FPD_DMA_CH5;FD550000;FD55FFFF;1|FPD;FPD_DMA_CH4;FD540000;FD54FFFF;1|FPD;FPD_DMA_CH3;FD530000;FD53FFFF;1|FPD;FPD_DMA_CH2;FD520000;FD52FFFF;1|FPD;FPD_DMA_CH1;FD510000;FD51FFFF;1|FPD;FPD_DMA_CH0;FD500000;FD50FFFF;1|LPD;EFUSE;FFCC0000;FFCCFFFF;1|FPD;Display\
+Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD050000;FD05FFFF;1|FPD;DDR_XMPU4_CFG;FD040000;FD04FFFF;1|FPD;DDR_XMPU3_CFG;FD030000;FD03FFFF;1|FPD;DDR_XMPU2_CFG;FD020000;FD02FFFF;1|FPD;DDR_XMPU1_CFG;FD010000;FD01FFFF;1|FPD;DDR_XMPU0_CFG;FD000000;FD00FFFF;1|FPD;DDR_QOS_CTRL;FD090000;FD09FFFF;1|FPD;DDR_PHY;FD080000;FD08FFFF;1|DDR;DDR_LOW;0;7FFFFFFF;1|DDR;DDR_HIGH;800000000;97FFFFFFF;1|FPD;DDDR_CTRL;FD070000;FD070FFF;1|LPD;Coresight;FE800000;FEFFFFFF;1|LPD;CSU_DMA;FFC80000;FFC9FFFF;1|LPD;CSU;FFCA0000;FFCAFFFF;1|LPD;CRL_APB;FF5E0000;FF85FFFF;1|FPD;CRF_APB;FD1A0000;FD2DFFFF;1|FPD;CCI_REG;FD5E0000;FD5EFFFF;1|LPD;CAN1;FF070000;FF07FFFF;1|LPD;CAN0;FF060000;FF06FFFF;0|FPD;APU;FD5C0000;FD5CFFFF;1|LPD;APM_INTC_IOU;FFA20000;FFA2FFFF;1|LPD;APM_FPD_LPD;FFA30000;FFA3FFFF;1|FPD;APM_5;FD490000;FD49FFFF;1|FPD;APM_0;FD0B0000;FD0BFFFF;1|LPD;APM2;FFA10000;FFA1FFFF;1|LPD;APM1;FFA00000;FFA0FFFF;1|LPD;AMS;FFA50000;FFA5FFFF;1|FPD;AFI_5;FD3B0000;FD3BFFFF;1|FPD;AFI_4;FD3A0000;FD3AFFFF;1|FPD;AFI_3;FD390000;FD39FFFF;1|FPD;AFI_2;FD380000;FD38FFFF;1|FPD;AFI_1;FD370000;FD37FFFF;1|FPD;AFI_0;FD360000;FD36FFFF;1|LPD;AFIFM6;FF9B0000;FF9BFFFF;1|FPD;ACPU_GIC;F9010000;F907FFFF;1} \
    CONFIG.PSU__PROTECTION__SUBSYSTEMS {PMU Firmware:PMU} \
    CONFIG.PSU__PSS_ALT_REF_CLK__ENABLE {0} \
    CONFIG.PSU__PSS_ALT_REF_CLK__FREQMHZ {33.333} \
@@ -2817,6 +2820,12 @@ proc create_root_design { parentCell } {
    CONFIG.PSU__SAXIGP6__DATA_WIDTH {128} \
    CONFIG.PSU__SD0_COHERENCY {0} \
    CONFIG.PSU__SD0_ROUTE_THROUGH_FPD {0} \
+   CONFIG.PSU__SD0__CLK_100_SDR_OTAP_DLY {0x0} \
+   CONFIG.PSU__SD0__CLK_200_SDR_OTAP_DLY {0x0} \
+   CONFIG.PSU__SD0__CLK_50_DDR_ITAP_DLY {0x0} \
+   CONFIG.PSU__SD0__CLK_50_DDR_OTAP_DLY {0x0} \
+   CONFIG.PSU__SD0__CLK_50_SDR_ITAP_DLY {0x15} \
+   CONFIG.PSU__SD0__CLK_50_SDR_OTAP_DLY {0x5} \
    CONFIG.PSU__SD0__DATA_TRANSFER_MODE {4Bit} \
    CONFIG.PSU__SD0__GRP_CD__ENABLE {0} \
    CONFIG.PSU__SD0__GRP_CD__IO {<Select>} \
@@ -2828,6 +2837,12 @@ proc create_root_design { parentCell } {
    CONFIG.PSU__SD0__SLOT_TYPE {SD 2.0} \
    CONFIG.PSU__SD1_COHERENCY {0} \
    CONFIG.PSU__SD1_ROUTE_THROUGH_FPD {0} \
+   CONFIG.PSU__SD1__CLK_100_SDR_OTAP_DLY {0x0} \
+   CONFIG.PSU__SD1__CLK_200_SDR_OTAP_DLY {0x0} \
+   CONFIG.PSU__SD1__CLK_50_DDR_ITAP_DLY {0x0} \
+   CONFIG.PSU__SD1__CLK_50_DDR_OTAP_DLY {0x0} \
+   CONFIG.PSU__SD1__CLK_50_SDR_ITAP_DLY {0x15} \
+   CONFIG.PSU__SD1__CLK_50_SDR_OTAP_DLY {0x5} \
    CONFIG.PSU__SD1__DATA_TRANSFER_MODE {4Bit} \
    CONFIG.PSU__SD1__GRP_CD__ENABLE {1} \
    CONFIG.PSU__SD1__GRP_CD__IO {MIO 45} \
@@ -3082,8 +3097,8 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net mdm_0_MBDEBUG_0 [get_bd_intf_pins iop_pmod0/DEBUG] [get_bd_intf_pins mdm/MBDEBUG_0]
   connect_bd_intf_net -intf_net pmod0_M_AXI [get_bd_intf_pins axi_interconnect_0/S00_AXI] [get_bd_intf_pins iop_pmod0/M_AXI]
   connect_bd_intf_net -intf_net pr_axi_shutdown_mana_0_M_AXI [get_bd_intf_pins ps_e_0/S_AXI_LPD] [get_bd_intf_pins shutdown_LPD/M_AXI]
-  connect_bd_intf_net -intf_net ps_e_0_GMII_ENET1 [get_bd_intf_pins gmii_to_rgmii_0/GMII] [get_bd_intf_pins ps_e_0/GMII_ENET1]
-  connect_bd_intf_net -intf_net ps_e_0_MDIO_ENET1 [get_bd_intf_pins gmii_to_rgmii_0/MDIO_GEM] [get_bd_intf_pins ps_e_0/MDIO_ENET1]
+#  connect_bd_intf_net -intf_net ps_e_0_GMII_ENET1 [get_bd_intf_pins gmii_to_rgmii_0/GMII] [get_bd_intf_pins ps_e_0/GMII_ENET1]
+#  connect_bd_intf_net -intf_net ps_e_0_MDIO_ENET1 [get_bd_intf_pins gmii_to_rgmii_0/MDIO_GEM] [get_bd_intf_pins ps_e_0/MDIO_ENET1]
   connect_bd_intf_net -intf_net shutdown_HP0_M_AXI [get_bd_intf_pins ps_e_0/S_AXI_HP0_FPD] [get_bd_intf_pins shutdown_HP0_FPD/M_AXI]
   connect_bd_intf_net -intf_net shutdown_HP2_M_AXI [get_bd_intf_pins ps_e_0/S_AXI_HP2_FPD] [get_bd_intf_pins shutdown_HP2_FPD/M_AXI]
   connect_bd_intf_net -intf_net zynq_us_ss_0_M03_AXI [get_bd_intf_pins axi_interconnect/M03_AXI] [get_bd_intf_pins video/S_AXI_LITE]
@@ -3168,9 +3183,9 @@ proc create_root_design { parentCell } {
   assign_bd_address -offset 0x40010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces iop_pmod0/mb/Data] [get_bd_addr_segs iop_pmod0/intr/S_AXI/Reg] -force
   assign_bd_address -offset 0x44A20000 -range 0x00010000 -target_address_space [get_bd_addr_spaces iop_pmod0/mb/Data] [get_bd_addr_segs iop_pmod0/io_switch/S_AXI/S_AXI_reg] -force
   assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces iop_pmod0/mb/Data] [get_bd_addr_segs iop_pmod0/lmb/lmb_bram_if_cntlr/SLMB1/Mem] -force
-  assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces iop_pmod0/mb/Instruction] [get_bd_addr_segs iop_pmod0/lmb/lmb_bram_if_cntlr/SLMB/Mem] -force
   assign_bd_address -offset 0x44A10000 -range 0x00010000 -target_address_space [get_bd_addr_spaces iop_pmod0/mb/Data] [get_bd_addr_segs iop_pmod0/spi/AXI_LITE/Reg] -force
   assign_bd_address -offset 0x41C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces iop_pmod0/mb/Data] [get_bd_addr_segs iop_pmod0/timer/S_AXI/Reg] -force
+  assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces iop_pmod0/mb/Instruction] [get_bd_addr_segs iop_pmod0/lmb/lmb_bram_if_cntlr/SLMB/Mem] -force
   assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces video/axi_vdma/Data_MM2S] [get_bd_addr_segs ps_e_0/SAXIGP2/HP0_DDR_LOW] -force
   assign_bd_address -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces video/axi_vdma/Data_MM2S] [get_bd_addr_segs ps_e_0/SAXIGP2/HP0_LPS_OCM] -force
   assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces video/axi_vdma/Data_MM2S] [get_bd_addr_segs ps_e_0/SAXIGP2/HP0_QSPI] -force
@@ -3178,6 +3193,176 @@ proc create_root_design { parentCell } {
   assign_bd_address -offset 0xFF000000 -range 0x01000000 -target_address_space [get_bd_addr_spaces video/axi_vdma/Data_S2MM] [get_bd_addr_segs ps_e_0/SAXIGP4/HP2_LPS_OCM] -force
   assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces video/axi_vdma/Data_S2MM] [get_bd_addr_segs ps_e_0/SAXIGP4/HP2_QSPI] -force
 
+  # Perform GUI Layout
+  regenerate_bd_layout -layout_string {
+   "ActiveEmotionalView":"Default View",
+   "Default View_ScaleFactor":"0.140876",
+   "Default View_TopLeft":"-1462,-547",
+   "DisplayTieOff":"1",
+   "ExpandedHierarchyInLayout":"",
+   "guistr":"# # String gsaved with Nlview 7.0r4  2019-12-20 bk=1.5203 VDI=41 GEI=36 GUI=JA:10.0 TLS
+#  -string -flagsOSRD
+preplace port DRU_CLK_IN -pg 1 -lvl 0 -x -60 -y 1910 -defaultsOSRD
+preplace port RX_DDC_OUT -pg 1 -lvl 9 -x 5580 -y 1830 -defaultsOSRD
+preplace port TX_DDC_OUT -pg 1 -lvl 9 -x 5580 -y 1850 -defaultsOSRD
+preplace port fmch_iic -pg 1 -lvl 9 -x 5580 -y 410 -defaultsOSRD
+preplace port dip_switch_4bits -pg 1 -lvl 9 -x 5580 -y 1310 -defaultsOSRD
+preplace port led_4bits -pg 1 -lvl 9 -x 5580 -y 570 -defaultsOSRD
+preplace port HDMI_TX_I2C -pg 1 -lvl 9 -x 5580 -y 110 -defaultsOSRD
+preplace port HDMI_TX_REFCLK -pg 1 -lvl 0 -x -60 -y 1930 -defaultsOSRD
+preplace port ETH1_MDIO -pg 1 -lvl 9 -x 5580 -y -490 -defaultsOSRD
+preplace port ETH1_RGMII -pg 1 -lvl 9 -x 5580 -y -470 -defaultsOSRD
+preplace port port-id_HDMI_RX_CLK_N_IN -pg 1 -lvl 0 -x -60 -y 1890 -defaultsOSRD
+preplace port port-id_HDMI_RX_CLK_P_IN -pg 1 -lvl 0 -x -60 -y 2040 -defaultsOSRD
+preplace port port-id_HDMI_TX_CLK_N_OUT -pg 1 -lvl 9 -x 5580 -y 1870 -defaultsOSRD
+preplace port port-id_HDMI_TX_CLK_P_OUT -pg 1 -lvl 9 -x 5580 -y 1890 -defaultsOSRD
+preplace port port-id_TX_HPD_IN -pg 1 -lvl 0 -x -60 -y 2110 -defaultsOSRD
+preplace port port-id_reset -pg 1 -lvl 0 -x -60 -y 1200 -defaultsOSRD
+preplace port port-id_BT_HCI_RX -pg 1 -lvl 9 -x 5580 -y 1390 -defaultsOSRD
+preplace port port-id_BT_HCI_CTS -pg 1 -lvl 9 -x 5580 -y 1410 -defaultsOSRD
+preplace port port-id_BT_HCI_TX -pg 1 -lvl 0 -x -60 -y 1310 -defaultsOSRD
+preplace port port-id_BT_HCI_RTS -pg 1 -lvl 0 -x -60 -y 1290 -defaultsOSRD
+preplace portBus HDMI_RX_DAT_N_IN -pg 1 -lvl 0 -x -60 -y 2000 -defaultsOSRD
+preplace portBus HDMI_RX_DAT_P_IN -pg 1 -lvl 0 -x -60 -y 2020 -defaultsOSRD
+preplace portBus HDMI_TX_DAT_N_OUT -pg 1 -lvl 9 -x 5580 -y 1910 -defaultsOSRD
+preplace portBus HDMI_TX_DAT_P_OUT -pg 1 -lvl 9 -x 5580 -y 1930 -defaultsOSRD
+preplace portBus pmod0 -pg 1 -lvl 9 -x 5580 -y 730 -defaultsOSRD
+preplace portBus BT_EN -pg 1 -lvl 9 -x 5580 -y -190 -defaultsOSRD
+preplace portBus WLAN_EN -pg 1 -lvl 9 -x 5580 -y -90 -defaultsOSRD
+preplace portBus ETH1_RESET_n -pg 1 -lvl 9 -x 5580 -y 10 -defaultsOSRD
+preplace inst iop_pmod0 -pg 1 -lvl 2 -x 1130 -y 710 -defaultsOSRD
+preplace inst video -pg 1 -lvl 8 -x 5290 -y 1940 -defaultsOSRD
+preplace inst address_remap_0 -pg 1 -lvl 4 -x 2359 -y 770 -defaultsOSRD
+preplace inst mb_iop_pmod0_intr_ack -pg 1 -lvl 2 -x 1130 -y 1060 -defaultsOSRD
+preplace inst mb_iop_pmod0_reset -pg 1 -lvl 2 -x 1130 -y 940 -defaultsOSRD
+preplace inst proc_sys_reset_0 -pg 1 -lvl 2 -x 1130 -y 1200 -defaultsOSRD
+preplace inst proc_sys_reset_1 -pg 1 -lvl 2 -x 1130 -y 1410 -defaultsOSRD
+preplace inst proc_sys_reset_2 -pg 1 -lvl 2 -x 1130 -y 1590 -defaultsOSRD
+preplace inst proc_sys_reset_3 -pg 1 -lvl 2 -x 1130 -y 1770 -defaultsOSRD
+preplace inst shutdown_HP0_FPD -pg 1 -lvl 5 -x 2834 -y 1550 -defaultsOSRD
+preplace inst shutdown_HP2_FPD -pg 1 -lvl 5 -x 2834 -y 1800 -defaultsOSRD
+preplace inst shutdown_LPD -pg 1 -lvl 5 -x 2834 -y 780 -defaultsOSRD
+preplace inst vcc_const -pg 1 -lvl 7 -x 4431 -y 2040 -defaultsOSRD
+preplace inst xlconcat0 -pg 1 -lvl 6 -x 3560 -y 1910 -defaultsOSRD
+preplace inst xlconcat_0 -pg 1 -lvl 4 -x 2359 -y 1270 -defaultsOSRD
+preplace inst xlconcat_1 -pg 1 -lvl 4 -x 2359 -y 1030 -defaultsOSRD
+preplace inst tx_refclk_rdy -pg 1 -lvl 8 -x 5290 -y 1520 -defaultsOSRD
+preplace inst BT_EN -pg 1 -lvl 8 -x 5290 -y -190 -defaultsOSRD
+preplace inst WLAN_EN -pg 1 -lvl 8 -x 5290 -y -90 -defaultsOSRD
+preplace inst ETH1_RESET_n -pg 1 -lvl 8 -x 5290 -y 10 -defaultsOSRD
+preplace inst axi_iic_0 -pg 1 -lvl 8 -x 5290 -y 130 -defaultsOSRD
+preplace inst axi_intc_0 -pg 1 -lvl 8 -x 5290 -y 1160 -defaultsOSRD
+preplace inst axi_interconnect -pg 1 -lvl 7 -x 4431 -y 510 -defaultsOSRD
+preplace inst axi_interconnect_0 -pg 1 -lvl 3 -x 1834 -y 730 -defaultsOSRD
+preplace inst axi_mem_intercon -pg 1 -lvl 4 -x 2359 -y 1540 -defaultsOSRD
+preplace inst axi_mem_intercon_1 -pg 1 -lvl 4 -x 2359 -y 1790 -defaultsOSRD
+preplace inst clk_wiz_0 -pg 1 -lvl 2 -x 1130 -y 390 -defaultsOSRD
+preplace inst fmch_axi_iic -pg 1 -lvl 8 -x 5290 -y 430 -defaultsOSRD
+preplace inst gmii_to_rgmii_0 -pg 1 -lvl 8 -x 5290 -y -390 -defaultsOSRD
+preplace inst gpio_btns -pg 1 -lvl 8 -x 5290 -y 990 -defaultsOSRD
+preplace inst gpio_leds -pg 1 -lvl 8 -x 5290 -y 570 -defaultsOSRD
+preplace inst gpio_sws -pg 1 -lvl 8 -x 5290 -y 1310 -defaultsOSRD
+preplace inst mdm -pg 1 -lvl 1 -x 550 -y 650 -defaultsOSRD
+preplace inst pmod0_buf -pg 1 -lvl 8 -x 5290 -y 720 -defaultsOSRD
+preplace inst ps_e_0 -pg 1 -lvl 6 -x 3560 -y 1320 -defaultsOSRD
+preplace inst reset_control -pg 1 -lvl 8 -x 5290 -y 290 -defaultsOSRD
+preplace netloc ARESETN_1 1 2 2 NJ 1430 2000
+preplace netloc BT_EN_Dout 1 8 1 N -190
+preplace netloc ETH1_RESET_n_Dout 1 8 1 N 10
+preplace netloc Net 1 8 1 NJ 730
+preplace netloc WLAN_EN_Dout 1 8 1 N -90
+preplace netloc axi_iic_0_iic2intc_irpt 1 5 4 3120 1600 NJ 1600 NJ 1600 5560
+preplace netloc axi_intc_0_irq 1 3 6 2040 1400 2520J 1380 3050J 1610 NJ 1610 NJ 1610 5510
+preplace netloc axi_vdma_0_mm2s_introut 1 5 4 3130 1640 NJ 1640 NJ 1640 5560
+preplace netloc axi_vdma_0_s2mm_introut 1 5 4 3140 1650 NJ 1650 NJ 1650 5550
+preplace netloc clk_wiz_0_clk_out1 1 2 6 1320J 0 NJ 0 NJ 0 NJ 0 NJ 0 4820
+preplace netloc data_i_1 1 1 8 700 560 NJ 560 NJ 560 NJ 560 NJ 560 4010J 1010 4660J 900 5540
+preplace netloc emio_uart0_ctsn_0_1 1 0 7 NJ 1290 660J 1300 NJ 1300 2010J 1410 2510J 1370 3090J 1560 3950
+preplace netloc emio_uart0_rxd_0_1 1 0 7 NJ 1310 NJ 1310 NJ 1310 1990J 1420 2530J 1390 3070J 1550 3960
+preplace netloc mdm_0_Debug_SYS_Rst 1 1 1 660 660n
+preplace netloc net_bdry_in_HDMI_RX_CLK_N_IN 1 0 8 NJ 1890 NJ 1890 NJ 1890 2030J 1910 2550J 1400 3020J 1620 NJ 1620 4660J
+preplace netloc net_bdry_in_HDMI_RX_CLK_P_IN 1 0 8 -40J 1940 NJ 1940 NJ 1940 NJ 1940 2560J 1410 3000J 1630 NJ 1630 4620J
+preplace netloc net_bdry_in_HDMI_RX_DAT_N_IN 1 0 8 -30J 1950 NJ 1950 NJ 1950 NJ 1950 NJ 1950 3110J 1760 NJ 1760 4590J
+preplace netloc net_bdry_in_HDMI_RX_DAT_P_IN 1 0 8 NJ 2020 NJ 2020 NJ 2020 NJ 2020 NJ 2020 3090J 2100 NJ 2100 4600J
+preplace netloc net_bdry_in_TX_HPD_IN 1 0 8 NJ 2110 NJ 2110 NJ 2110 NJ 2110 NJ 2110 NJ 2110 NJ 2110 4820J
+preplace netloc net_bdry_in_reset 1 0 2 N 1200 670
+preplace netloc net_rst_processor_1_100M_interconnect_aresetn 1 2 5 1370 130 NJ 130 NJ 130 NJ 130 N
+preplace netloc net_v_hdmi_rx_ss_irq 1 5 4 3150 1670 NJ 1670 4760J 1660 5520
+preplace netloc net_v_hdmi_tx_ss_irq 1 5 4 3160 1680 NJ 1680 4780J 1670 5510
+preplace netloc net_vcc_const_dout 1 7 1 4790 2020n
+preplace netloc net_vid_phy_controller_irq 1 5 4 3170 1690 NJ 1690 4800J 1680 5500
+preplace netloc net_vid_phy_controller_phy_txn_out 1 8 1 NJ 1910
+preplace netloc net_vid_phy_controller_phy_txp_out 1 8 1 NJ 1930
+preplace netloc net_vid_phy_controller_tx_tmds_clk_n 1 8 1 NJ 1870
+preplace netloc net_vid_phy_controller_tx_tmds_clk_p 1 8 1 NJ 1890
+preplace netloc net_zynq_us_pl_resetn0 1 1 6 680 1960 NJ 1960 NJ 1960 NJ 1960 3070J 1660 3940
+preplace netloc net_zynq_us_ss_0_clk_out2 1 1 7 710 1870 NJ 1870 2010 1670 2540 1360 3160 1580 4020 1590 4630J
+preplace netloc net_zynq_us_ss_0_dcm_locked 1 2 6 NJ 1450 1990 1660 2570 1420 3040J 1570 4040 1580 4640J
+preplace netloc net_zynq_us_ss_0_peripheral_aresetn 1 1 7 710 830 1380 890 2010J 870 2580J 910 NJ 910 3940 20 4700
+preplace netloc net_zynq_us_ss_0_s_axi_aclk 1 1 7 670 570 1360 870 1990 660 2550 1080 3170 1080 3990 30 4690
+preplace netloc pmod0_data_o 1 2 6 1340J 580 NJ 580 NJ 580 NJ 580 4000J 1020 4650
+preplace netloc pmod0_intr_req 1 2 4 1310 590 NJ 590 NJ 590 3060J
+preplace netloc pmod0_intr_req_Dout 1 1 2 700J 840 1310
+preplace netloc pmod0_peripheral_aresetn 1 2 1 N 730
+preplace netloc pmod0_reset_Dout 1 1 2 710J 580 1320
+preplace netloc pmod0_tri_o 1 2 6 1340J 880 NJ 880 2540J 1060 NJ 1060 NJ 1060 4640
+preplace netloc proc_sys_reset_0_peripheral_reset 1 2 6 1330 -370 NJ -370 NJ -370 NJ -370 NJ -370 4830J
+preplace netloc ps_e_0_emio_uart0_rtsn 1 6 3 3970J 1400 4720J 1410 NJ
+preplace netloc ps_e_0_emio_uart0_txd 1 6 3 3980J 1390 NJ 1390 NJ
+preplace netloc tx_refclk_rdy_Dout 1 7 2 4840 1460 5500
+preplace netloc xlconcat0_dout 1 6 2 4030J 1380 4740
+preplace netloc xlconcat_0_dout 1 4 2 NJ 1270 3120J
+preplace netloc xlconcat_1_dout 1 4 2 2510J 1070 3150J
+preplace netloc zynq_us_emio_gpio_o 1 1 7 710J 1000 NJ 1000 2000J 670 2520J 1090 NJ 1090 3940 1090 4830
+preplace netloc zynq_us_pl_clk2 1 1 6 690 1970 N 1970 N 1970 N 1970 3100 1740 3990
+preplace netloc zynq_us_pl_clk3 1 1 6 700 1980 N 1980 N 1980 N 1980 3090 1730 3930
+preplace netloc TX_REFCLK_1 1 0 8 NJ 1930 NJ 1930 NJ 1930 NJ 1930 NJ 1930 3020J 1770 NJ 1770 4610
+preplace netloc address_remap_0_M_AXI_out 1 4 1 N 770
+preplace netloc axi_iic_0_IIC 1 8 1 N 110
+preplace netloc axi_interconnect_0_M00_AXI 1 3 1 2010 720n
+preplace netloc axi_interconnect_M05_AXI 1 7 1 4600 430n
+preplace netloc axi_interconnect_M06_AXI 1 7 1 4680 270n
+preplace netloc axi_interconnect_M07_AXI 1 7 1 4750 470n
+preplace netloc axi_interconnect_M08_AXI 1 7 1 4730 490n
+preplace netloc axi_interconnect_M09_AXI 1 7 1 4710 510n
+preplace netloc axi_interconnect_M10_AXI 1 7 1 4680 530n
+preplace netloc axi_interconnect_M11_AXI 1 1 7 680 10 NJ 10 NJ 10 NJ 10 NJ 10 NJ 10 4590
+preplace netloc axi_interconnect_M12_AXI 1 7 1 4610 110n
+preplace netloc axi_interconnect_M13_AXI 1 7 1 4610 590n
+preplace netloc axi_interconnect_M14_AXI 1 7 1 4800 610n
+preplace netloc axi_interconnect_M15_AXI 1 7 1 4620 550n
+preplace netloc axi_interconnect_M16_AXI 1 4 4 2580 1030 NJ 1030 NJ 1030 4630
+preplace netloc axi_interconnect_M17_AXI 1 4 4 2590 1000 NJ 1000 NJ 1000 4590
+preplace netloc axi_interconnect_M18_AXI 1 4 4 2590 1040 NJ 1040 NJ 1040 4620
+preplace netloc axi_mem_intercon_1_M00_AXI 1 4 1 N 1790
+preplace netloc axi_mem_intercon_M00_AXI 1 4 1 N 1540
+preplace netloc axi_vdma_0_M_AXI_MM2S 1 3 6 2020 890 2560J 990 NJ 990 NJ 990 4670J 910 5540
+preplace netloc axi_vdma_0_M_AXI_S2MM 1 3 6 2030 900 2530J 1050 NJ 1050 NJ 1050 4780J 1070 5530
+preplace netloc gmii_to_rgmii_0_MDIO_PHY 1 8 1 N -490
+preplace netloc gmii_to_rgmii_0_RGMII 1 8 1 N -470
+preplace netloc gpio_leds_GPIO 1 8 1 N 570
+preplace netloc gpio_sws_GPIO 1 8 1 N 1310
+preplace netloc intf_net_axi_interconnect_M04_AXI 1 7 1 N 410
+preplace netloc intf_net_bdry_in_DRU_CLK_IN 1 0 8 NJ 1910 NJ 1910 NJ 1910 2000J 1920 2590J 1940 3080J 1750 4040J 1740 NJ
+preplace netloc intf_net_v_hdmi_rx_ss_DDC_OUT 1 8 1 NJ 1830
+preplace netloc intf_net_v_hdmi_tx_ss_DDC_OUT 1 8 1 NJ 1850
+preplace netloc intf_net_zynq_us_M_AXI_HPM0_LPD 1 6 1 3970 90n
+preplace netloc intf_net_zynq_us_ss_0_IIC 1 8 1 NJ 410
+preplace netloc intf_net_zynq_us_ss_0_M00_AXI 1 7 1 4770 330n
+preplace netloc intf_net_zynq_us_ss_0_M01_AXI 1 7 1 4820 350n
+preplace netloc intf_net_zynq_us_ss_0_M02_AXI 1 7 1 4810 370n
+preplace netloc mdm_0_MBDEBUG_0 1 1 1 N 640
+preplace netloc pmod0_M_AXI 1 2 1 1350 650n
+preplace netloc pr_axi_shutdown_mana_0_M_AXI 1 5 1 3160 710n
+preplace netloc ps_e_0_GMII_ENET1 1 6 2 3960 -410 NJ
+preplace netloc ps_e_0_MDIO_ENET1 1 6 2 3950 -430 NJ
+preplace netloc shutdown_HP0_M_AXI 1 5 1 3010 1220n
+preplace netloc shutdown_HP2_M_AXI 1 5 1 3030 1240n
+preplace netloc zynq_us_ss_0_M03_AXI 1 7 1 4790 390n
+levelinfo -pg 1 -60 550 1130 1834 2359 2834 3560 4431 5290 5580
+pagesize -pg 1 -db -bbox -sgen -290 -560 5820 6230
+"
+}
 
   # Restore current instance
   current_bd_instance $oldCurInst
@@ -3201,5 +3386,6 @@ proc create_root_design { parentCell } {
 ##################################################################
 
 create_root_design ""
+
 
 

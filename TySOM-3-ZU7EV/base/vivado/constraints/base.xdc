@@ -50,8 +50,6 @@ set_property  -dict {PACKAGE_PIN N9 IOSTANDARD LVCMOS33 PULLTYPE PULLUP} [get_po
 set_property  -dict {PACKAGE_PIN A6  IOSTANDARD LVDS} [get_ports {HDMI_TX_CLK_N_OUT}]
 set_property  -dict {PACKAGE_PIN B6  IOSTANDARD LVDS} [get_ports {HDMI_TX_CLK_P_OUT}]
 
-create_clock -name hdmi_clk -period 3.367 [get_ports TX_REFCLK_P_IN]
-
 set_property  -dict {PACKAGE_PIN B11  IOSTANDARD LVCMOS18} [get_ports {TX_HPD_IN}]
 set_property  -dict {PACKAGE_PIN C12  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports {HDMI_TX_I2C_scl_io}]
 set_property  -dict {PACKAGE_PIN C11  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_ports {HDMI_TX_I2C_sda_io}]
@@ -71,11 +69,14 @@ set_property  -dict {PACKAGE_PIN B10  IOSTANDARD LVCMOS18 PULLTYPE PULLUP} [get_
 set_property  PACKAGE_PIN T7 [get_ports {TX_REFCLK_N_IN}]
 set_property  PACKAGE_PIN T8 [get_ports {TX_REFCLK_P_IN}]
 
-create_clock -name hdmi_clk -period 3.367 [get_ports TX_REFCLK_P_IN]
+create_clock -name hdmi_tx_clk -period 3.367 [get_ports TX_REFCLK_P_IN]
 
 # HDMI in
 set_property PACKAGE_PIN U10 [get_ports DRU_CLK_IN_clk_p]
+create_clock -name hdmi_dru_clk -period 6.4 [get_ports DRU_CLK_IN_clk_p]
+
 set_property PACKAGE_PIN R10 [get_ports HDMI_RX_CLK_P_IN];
+create_clock -name hdmi_rx_clk -period 3.367 [get_ports HDMI_RX_CLK_P_IN]
 
 #set_property PACKAGE_PIN N2 [get_ports {HDMI_RX_DATA_P[0]}];
 #set_property PACKAGE_PIN L2 [get_ports {HDMI_RX_DATA_P[1]}];

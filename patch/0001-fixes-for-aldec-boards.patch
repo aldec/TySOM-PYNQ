@@ -1,8 +1,8 @@
 diff --git a/pynq/lib/video/clocks.py b/pynq/lib/video/clocks.py
-index 51728c58..f40ce89f 100644
+index 609f5bc4..92fcf777 100644
 --- a/pynq/lib/video/clocks.py
 +++ b/pynq/lib/video/clocks.py
-@@ -35,7 +35,8 @@ import cffi
+@@ -6,7 +6,8 @@ import cffi
  import math
  import numpy as np
  from .constants import *
@@ -12,10 +12,10 @@ index 51728c58..f40ce89f 100644
  
  _ffi = cffi.FFI()
  
-@@ -764,3 +765,152 @@ class SI_5324C:
-             self._write(reg_addr, data)
- 
+@@ -737,3 +738,152 @@ class SI_5324C:
          return result
+ 
+ 
 +# The following algorithm is transcribed from the TySOM-3A-ZU19EG HDMI reference design
 +
 +SI570_XTAL_FREQ = 40000000   # The freq of the crystal in Hz
@@ -166,10 +166,10 @@ index 51728c58..f40ce89f 100644
 +        self.freeze(True)
 +        self._rdy.write(0)
 diff --git a/sdbuild/Makefile b/sdbuild/Makefile
-index 3383c294..7397e569 100644
+index aadf3583..1b1abb5b 100644
 --- a/sdbuild/Makefile
 +++ b/sdbuild/Makefile
-@@ -143,7 +143,7 @@ $$(PL_PROJ_$1): $$(BSP_TARGET_$1)
+@@ -159,7 +159,7 @@ $$(PL_PROJ_$1): $$(BSP_TARGET_$1)
  		-s $$(BSP_BUILD_$1)/$$(BSP_PROJECT_$1).bsp -n petalinux_project
  	echo 'CONFIG_USER_LAYER_0="'$(CURDIR)/boot/meta-pynq'"' >> $$(PL_CONFIG_$1)
  	echo 'CONFIG_SUBSYSTEM_ROOTFS_EXT4=y' >> $$(PL_CONFIG_$1)
@@ -190,52 +190,57 @@ index f9964316..60275fe6 100644
  		pynq_board = "Unknown";
  	};
  };
-diff --git a/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi b/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi
-index 0c0dea13..489ff139 100644
---- a/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi
-+++ b/sdbuild/boot/meta-pynq/recipes-bsp/device-tree/files/pynq_zynqmp.dtsi
-@@ -1,2 +1,8 @@
- /include/ "pynq_xlnk_zynqmp.dtsi"
- /include/ "pynq_bootargs.dtsi"
-+
-+/*
-+linux,cma {
-+	alloc-ranges = <0x0 0x0 0x0 0x7ff00000>;
-+};
-+*/
-diff --git a/sdbuild/packages/sigrok/qemu.sh b/sdbuild/packages/sigrok/qemu.sh
-index 50a82706..4ba82289 100755
---- a/sdbuild/packages/sigrok/qemu.sh
-+++ b/sdbuild/packages/sigrok/qemu.sh
-@@ -19,7 +19,7 @@ mkdir sigrok_build
- cd sigrok_build
+diff --git a/sdbuild/packages/bootpy/bootpy.sh b/sdbuild/packages/bootpy/bootpy.sh
+index f8b7f738..521f3f7e 100755
+--- a/sdbuild/packages/bootpy/bootpy.sh
++++ b/sdbuild/packages/bootpy/bootpy.sh
+@@ -4,7 +4,7 @@
+ for f in /etc/profile.d/*.sh; do source $f; done
  
- wget http://sigrok.org/download/source/libsigrok/${libsigrok}.tar.gz
--tar -xf ${libsigrok}.tar.gz
-+tar -xzf ${libsigrok}.tar.gz
- cd ${libsigrok}
- ./configure --prefix=/opt/sigrok
- make -j 4
-@@ -27,7 +27,7 @@ make install
- cd ..
+ BOOT_MNT=/boot
+-BOOT_DEV=/dev/mmcblk0p1
++BOOT_DEV=/dev/mmcblk1p1
+ BOOT_PY=$BOOT_MNT/boot.py
  
- wget http://sigrok.org/download/source/libsigrokdecode/${libsigrokdecode}.tar.gz
--tar -xf ${libsigrokdecode}.tar.gz
-+tar -xzf ${libsigrokdecode}.tar.gz
- cd ${libsigrokdecode}
- patch -p2 -i $patch_file
- export PKG_CONFIG_PATH=/opt/sigrok/lib/pkgconfig
-diff --git a/sdbuild/ubuntu/focal/aarch64/multistrap.config b/sdbuild/ubuntu/focal/aarch64/multistrap.config
-index dfc91c14..a77e30fe 100644
---- a/sdbuild/ubuntu/focal/aarch64/multistrap.config
-+++ b/sdbuild/ubuntu/focal/aarch64/multistrap.config
-@@ -6,7 +6,8 @@ allowrecommends=true
- addimportant=true
+ if !(mount | grep -q "$BOOT_MNT") ; then
+diff --git a/sdbuild/packages/resizefs/resizefs.sh b/sdbuild/packages/resizefs/resizefs.sh
+index a60700cf..0b92e40d 100755
+--- a/sdbuild/packages/resizefs/resizefs.sh
++++ b/sdbuild/packages/resizefs/resizefs.sh
+@@ -8,8 +8,8 @@
+ exec >> /var/log/syslog
+ exec 2>&1
  
- [Focal]
--source=http://ports.ubuntu.com/ubuntu-ports
-+#source=http://ports.ubuntu.com/ubuntu-ports
-+source=http://ubuntu.task.gda.pl/ubuntu/
- suite=focal universe
- keyring=ubuntu-keyring
- packages=python3-networkx python3-lxml python3-numexpr
+-TGTDEV=/dev/mmcblk0
+-TGTPART=/dev/mmcblk0p2
++TGTDEV=/dev/mmcblk1
++TGTPART=/dev/mmcblk1p2
+ source /etc/environment
+ 
+ if [[ ${RESIZED} -eq "1" ]]; then
+diff --git a/sdbuild/packages/wifi_connect/wifi_connect.sh b/sdbuild/packages/wifi_connect/wifi_connect.sh
+index b7ff24a3..5e80f2bf 100755
+--- a/sdbuild/packages/wifi_connect/wifi_connect.sh
++++ b/sdbuild/packages/wifi_connect/wifi_connect.sh
+@@ -7,7 +7,7 @@ config_name="wpa_supplicant.conf"
+ driver_name="wifi.ko"
+ 
+ #use the 1st partition of sdcard
+-boot_part="/dev/mmcblk0p1"
++boot_part="/dev/mmcblk1p1"
+ 
+ #mount boot partition to temp folder
+ mount -o rw "$boot_part" "$mount"
+diff --git a/sdbuild/boot/image.wks b/sdbuild/boot/image.wks
+index 8ca728b6..35fa456b 100644
+--- a/sdbuild/boot/image.wks
++++ b/sdbuild/boot/image.wks
+@@ -1,6 +1,6 @@
+ # Description: Creates a partitioned SD card image. Boot files
+ # are located in the first vfat partition. Rootfs will be in second ext4 partition.
+ 
+-part /boot --source bootimg-partition --ondisk mmcblk0 --fstype=vfat --label PYNQ --active --align 4 --size 100 --overhead-factor=1
+-part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label root --align 1024 --extra-space 512
++part /boot --source bootimg-partition --ondisk mmcblk1 --fstype=vfat --label PYNQ --active --align 4 --size 100 --overhead-factor=1
++part / --source rootfs --ondisk mmcblk1 --fstype=ext4 --label root --align 1024 --extra-space 512
+ 

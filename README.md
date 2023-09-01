@@ -1,4 +1,4 @@
-# PYNQ v2.7 for Aldec boards
+# PYNQ v3.0.1 for Aldec boards
 
 ## Table of Content
 - [Description](#description)
@@ -24,9 +24,9 @@ The repository adds support for Aldec boards based on Xilinx Zynq Ultrascale+:
 <a name="pre-built"/>
 
 ## Pre-built PYNQ images
-Download pre-built PYNQ 2.7.0 image for TySOM-3-ZU7EV or TySOM-3A-ZU19EG:
-- [TySOM-3-ZU7EV PYNQ v2.7 image](https://github.com/aldec/TySOM-PYNQ/releases/download/2.7/tysom3_v2.7.0.img.7z)
-- [TySOM-3A-ZU19EG PYNQ v2.7 image](https://github.com/aldec/TySOM-PYNQ/releases/download/2.7/tysom3a_v2.7.0.img.7z)
+Download pre-built PYNQ 3.0.1 image for TySOM-3-ZU7EV or TySOM-3A-ZU19EG:
+- [TySOM-3-ZU7EV PYNQ v3.0.1 image](https://github.com/aldec/TySOM-PYNQ/releases/download/v3.0.1/TySOM-3-ZU7EV-3.0.1.7z)
+- [TySOM-3A-ZU19EG PYNQ v3.0.1 image](https://github.com/aldec/TySOM-PYNQ/releases/download/v3.0.1/TySOM-3A-ZU19EG-3.0.1.7z)
 
 Using pre-built image is a preferred way to use PYNQ with TySOM boards.
 
@@ -40,9 +40,9 @@ Use Balena Etcher or Win32 Disk Imager to copy the .img file onto an SD card 16G
 ## Build own image
 Advanced users can build own image. The build process takes several hours to finish. 
 #### Requirements
-- Ubuntu 18.04 or 20.04 host machine (can be virtual)
-- installed Xilinx Vivado 2020.2 tool
-- installed Xilinx Petalinux 2020.2 tool
+- Ubuntu 20.04 host machine (can be virtual)
+- installed Xilinx Vivado 2022.1 tool
+- installed Xilinx Petalinux 2022.1 tool
 - sudo privileges
 - at least 80 GB of free disk space for build process
 - recommended 16 GB RAM for host machine
@@ -61,15 +61,15 @@ git lfs install
 ```
 Clone the repository.
 ```
-git clone -b 2.7 https://github.com/aldec/TySOM-PYNQ.git
+git clone -b 3.0.1 https://github.com/aldec/TySOM-PYNQ.git
 cd TySOM-PYNQ
 ```
 The repository contains board files for Aldec boards and script for preparing PYNQ image. The script downloads PYNQ source, generic PYNQ image and build all components.
 
-Before running the script, source settings file for Vivado 2020.2 and Petalinux 2020.2.
+Before running the script, source settings file for Vivado 2022.1 and Petalinux 2022.1.
 ````
-source <vivado_2020_2_path>/settings64.sh
-source <petalinux_2020_2_path>/settings.sh
+source <vivado_2022_1_path>/settings64.sh
+source <petalinux_2022_1_path>/settings.sh
 ````
 
 Build the image for TySOM-3-ZU7EV:
@@ -91,8 +91,8 @@ and rerun build.sh.
 
 ### References
 For more information about PYNQ refer to:
-- [PYNQ documentation](https://pynq.readthedocs.io/en/v2.7.0/)
-- [Getting started](https://pynq.readthedocs.io/en/v2.7.0/getting_started.html)
+- [PYNQ documentation](https://pynq.readthedocs.io/en/v3.0.0/)
+- [Getting started](https://pynq.readthedocs.io/en/v3.0.0/getting_started.html)
 - [PYNQ project website](http://www.pynq.io/)
 - [PYNQ community forum](https://discuss.pynq.io/)
 
