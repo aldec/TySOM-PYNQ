@@ -1,11 +1,13 @@
 #!/bin/bash
 
+#set -euo pipefail
+#set -x
 
 ################################################################################
 #
-# The following script should work if you have petalinux 2020.2 and Vivado
-# 2020.2 in the path.  A few very common utilities are also used.  This will
-# build PYNQ v2.7 for TySOM-3-ZU7EV and TySOM-3A-ZU19EG
+# The following script should work if you have petalinux 2022.1 and Vivado
+# 2022.1 in the path.  A few very common utilities are also used.  This will
+# build PYNQ v3.0.1 for TySOM-3-ZU7EV and TySOM-3A-ZU19EG
 #
 # Adjust file names and paths of shell variables if needed.
 #
@@ -31,11 +33,11 @@ fi
 START_DIR=$PWD
 MAIN_DIR=$START_DIR/build
 
-SD_IMAGE_FILE=$START_DIR/$BOARD_TYPE-2.7.0.img
+SD_IMAGE_FILE=$START_DIR/$BOARD_TYPE-3.0.1.img
 
 PYNQ_GIT_LOCAL_PATH=$MAIN_DIR/PYNQ
-PYNQ_IMAGE_FILE=$PYNQ_GIT_LOCAL_PATH/sdbuild/output/$BOARD_TYPE-2.7.0.img
-PYNQ_GIT_TAG=v2.7.0
+PYNQ_IMAGE_FILE=$PYNQ_GIT_LOCAL_PATH/sdbuild/output/$BOARD_TYPE-3.0.1.img
+PYNQ_GIT_TAG=v3.0.1
 PYNQ_GIT_REPO_URL=https://github.com/Xilinx/PYNQ
 PYNQ_PATCH=$START_DIR/patch/0001-fixes-for-aldec-boards.patch
 
@@ -44,13 +46,15 @@ OVERLAY_FILE_PATH=$ALDEC_BOARDDIR/$BOARD_TYPE/base
 OVERLAY_NAME=base
 OVERLAY_SEMA_NAME="_""$BOARD_TYPE""_"
 BSP_FILE_PATH=$ALDEC_BOARDDIR/$BOARD_TYPE
-BSP_FILE_URL=https://github.com/aldec/TySOM-PYNQ/raw/2.7/$BOARD_TYPE
+BSP_FILE_URL=https://github.com/aldec/TySOM-PYNQ/raw/3.0.1/$BOARD_TYPE
 BSP_FILE=$BOARD_TYPE"_pynq.bsp"
 
 ROOTFS_TMP_DIR=$MAIN_DIR/pre-built
-ROOTFS_ZIP_FILE=focal.aarch64.2.7.0_2021_11_17.tar.gz
-ROOTFS_IMAGE_FILE=focal.aarch64.2.7.0_2021_11_17.tar
-ROOTFS_IMAGE_FILE_URL=https://www.xilinx.com/bin/public/openDownload?filename=focal.aarch64.2.7.0_2021_11_17.tar.gz
+ROOTFS_ZIP_FILE=jammy.aarch64.3.0.1.tar.gz
+ROOTFS_IMAGE_FILE=jammy.aarch64.3.0.1.tar
+ROOTFS_IMAGE_FILE_URL=https://www.xilinx.com/bin/public/openDownload?filename=jammy.aarch64.3.0.1.tar.gz
+PREBUILT_IMAGE_ZIP_FILE=pynq-3.0.1.tar.gz
+PREBUILT_IMAGE_FILE_URL=https://github.com/Xilinx/PYNQ/releases/download/v3.0.1/pynq-3.0.1.tar.gz
 
 ##################################
 # Fetching and compiling         #
@@ -59,8 +63,8 @@ echo "Status: building from location: $START_DIR"
 echo "Status: creating dir "$ROOTFS_TMP_DIR" to store rootfs tarball"
 mkdir -p $ROOTFS_TMP_DIR
 
-ln -s $PYNQ_GIT_LOCAL_PATH/boards/ip $START_DIR
-ln -s $PYNQ_GIT_LOCAL_PATH/boards/sw_repo $START_DIR
+[ ! -e $START_DIR/ip ] && ln -s $PYNQ_GIT_LOCAL_PATH/boards/ip $START_DIR
+[ ! -e $START_DIR/sw_repo ] && ln -s $PYNQ_GIT_LOCAL_PATH/boards/sw_repo $START_DIR
 
 if [ -d "$PYNQ_GIT_LOCAL_PATH" ]; then
 	echo "Status: PYNQ repo -> already cloned $PYNQ_GIT_LOCAL_PATH"
@@ -90,7 +94,7 @@ else
 	if [ -f "$ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE" ]; then
 		echo "Status: zip file -> already exists"
 	else
-		wget "$ROOTFS_IMAGE_FILE_URL" -O "$ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE"
+		wget --no-check-certificate "$ROOTFS_IMAGE_FILE_URL" -O "$ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE"
 	fi
 	if [ -s $ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE ]; then
 		gzip -d "$ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE" 
@@ -130,18 +134,37 @@ else
 	fi
 fi
 
-
 cd "$PYNQ_GIT_LOCAL_PATH"
 git apply --check --reverse $PYNQ_PATCH
 if [ $? -eq 1 ]; then
 	git apply $PYNQ_PATCH
 	git commit -am "fixes for Aldec boards"
+else
+	echo "Patch already applied"
 fi
 
+echo "Status: Fetching pre-built rootfs"
+wget --no-check-certificate -c "$ROOTFS_IMAGE_FILE_URL" -O "$ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE"
+if ! [ -f "$ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE" ]; then
+	echo "Error: Image file $ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE -> does not exist"
+	exit -1
+fi
+
+echo "Status: Fetching pre-built PYNQ image file"
+wget --no-check-certificate -c "$PREBUILT_IMAGE_FILE_URL" -O "$ROOTFS_TMP_DIR/$PREBUILT_IMAGE_ZIP_FILE"
+if ! [ -f "$ROOTFS_TMP_DIR/$PREBUILT_IMAGE_ZIP_FILE" ]; then
+	echo "Error: Image file $ROOTFS_TMP_DIR/$PREBUILT_IMAGE_ZIP_FILE -> does not exist"
+	exit -1
+fi
+
+# For PYNQ v3.0 these files must be located under the PYNQ git, so save a copy and just softlink
+ln -fs $ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE $PYNQ_GIT_LOCAL_PATH/sdbuild/prebuilt/pynq_rootfs.aarch64.tar.gz
+ln -fs $ROOTFS_TMP_DIR/$PREBUILT_IMAGE_ZIP_FILE $PYNQ_GIT_LOCAL_PATH/sdbuild/prebuilt/pynq_sdist.tar.gz
+
 cd "$PYNQ_GIT_LOCAL_PATH/sdbuild"
-#sudo make clean
+make clean
 echo "Status: Building PYNQ SD Image & removed prior PYNQ build (if it existed)"
-make PREBUILT=$ROOTFS_TMP_DIR/$ROOTFS_IMAGE_FILE BOARDDIR=$ALDEC_BOARDDIR BOARDS=$BOARD_TYPE
+make PREBUILT=$ROOTFS_TMP_DIR/$ROOTFS_ZIP_FILE BOARDDIR=$ALDEC_BOARDDIR BOARDS=$BOARD_TYPE
 
 if [ -f "$PYNQ_IMAGE_FILE" ]; then
 	mv -f "$PYNQ_IMAGE_FILE" "$SD_IMAGE_FILE"
